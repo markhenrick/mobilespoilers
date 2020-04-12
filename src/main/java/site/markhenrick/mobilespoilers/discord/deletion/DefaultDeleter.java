@@ -1,5 +1,6 @@
 package site.markhenrick.mobilespoilers.discord.deletion;
 
+import net.dv8tion.jda.api.entities.MessageChannel;
 import site.markhenrick.mobilespoilers.dal.SpoilerRepository;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -26,7 +27,8 @@ public class DefaultDeleter implements Deleter {
 			final var spoiler = repo.getSpoiler(messageId);
 			if (spoiler == null) return resolve(DeletionResult.SPOILER_NOT_FOUND);
 			if (!spoiler.getUserId().equals(requestingUserId)) return resolve(DeletionResult.UNAUTHORISED);
-			final var channel = jda.getTextChannelById(spoiler.getChannelId());
+			MessageChannel channel = jda.getTextChannelById(spoiler.getChannelId());
+			if (channel == null) channel = jda.getPrivateChannelById(spoiler.getChannelId());
 			if (channel == null) return resolve(DeletionResult.CHANNEL_NOT_FOUND);
 			return channel.deleteMessageById(messageId)
 				.map((success) -> {
