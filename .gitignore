@@ -1,0 +1,14 @@
+.gradle/
+build/
+out/
+.idea/
+*.iml
+target/
+
+*.db
+*.sqlite
+*.sqlite3
+*-shm
+*-wal
+
+config.yaml
