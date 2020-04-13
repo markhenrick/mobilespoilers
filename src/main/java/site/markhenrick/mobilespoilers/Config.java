@@ -1,4 +1,4 @@
-package site.markhenrick.mobilespoilers.config;
+package site.markhenrick.mobilespoilers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
