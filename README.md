@@ -9,3 +9,7 @@ This bot adds a `!spoil` command to do that
 I've deliberately over-engineered this a bit to make it more fun. The main complication is that it uses an SQLite DB to track who owns what spoilers, so the user can delete it later
 
 It is currently very much a WIP
+
+# Invite
+
+There is a public instance of this bot which can be invited with [this](https://discordapp.com/oauth2/authorize?client_id=699048830112366632&scope=bot&permissions=322624) link
