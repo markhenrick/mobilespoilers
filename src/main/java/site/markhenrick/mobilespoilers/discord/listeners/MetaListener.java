@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.events.guild.*;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import site.markhenrick.mobilespoilers.discord.commands.AboutCommand;
 
 public class MetaListener extends ListenerAdapter {
 	private static final Logger LOG = LoggerFactory.getLogger(MetaListener.class);
@@ -14,6 +15,7 @@ public class MetaListener extends ListenerAdapter {
 	public void onReady(final ReadyEvent event) {
 		LOG.info("Ready. Logged in as {}. {}/{} guilds available",
 			event.getJDA().getSelfUser(), event.getGuildAvailableCount(), event.getGuildTotalCount());
+		LOG.info("Invite link: {}", AboutCommand.getInviteLink(event.getJDA().getSelfUser().getId()));
 	}
 
 	@Override

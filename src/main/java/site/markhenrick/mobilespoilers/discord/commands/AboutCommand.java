@@ -59,7 +59,7 @@ public class AboutCommand extends Command {
 		return embed.build();
 	}
 
-	static String getInviteLink(final String botId) {
+	public static String getInviteLink(final String botId) {
 		return String.format("https://discordapp.com/oauth2/authorize?client_id=%s&scope=bot&permissions=%s", botId, INVITE_BITFIELD);
 	}
 }
