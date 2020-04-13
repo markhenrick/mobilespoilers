@@ -51,6 +51,9 @@ public class DeleteCommand extends Command {
 					case UNKNOWN_ERROR:
 						event.reply(ERROR_TEXT);
 						break;
+					default:
+						LOG.error("Unexpected result: {}", result);
+						event.reply(ERROR_TEXT);
 				}
 			}, error -> {
 				LOG.error("RestAction from deleter threw", error);

@@ -8,6 +8,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 
 public class Config {
 	private static final Logger LOG = LoggerFactory.getLogger(Config.class);
@@ -69,14 +70,24 @@ public class Config {
 
 	@Override
 	public String toString() {
-		return String.format("{\n\ttoken: '%s',\n\tdbPath: '%s',\n\tprefix: '%s',\n\treaction: '%s',\n\tadminUserId: %s,\n\tshowAdminInfo: %s\n}",
-			token, dbPath, prefix, reaction, adminUserId, showAdminInfo);
+		try {
+			final var sb = new StringBuilder("{\n");
+			for (final var field : Config.class.getDeclaredFields()) {
+				if (!Modifier.isStatic(field.getModifiers())) {
+					sb.append('\t').append(field.getName()).append(": ").append(field.get(this)).append(",\n");
+				}
+			}
+			sb.append("}");
+			return sb.toString();
+		} catch (final IllegalAccessException e) {
+			return "Unable to render config to string - reflective access denied";
+		}
 	}
 
-	private void validate() throws IllegalAccessException {
+	public void validate() throws IllegalAccessException {
 		var passed = true;
 		for (final var field : Config.class.getDeclaredFields()) {
-			if (field.get(this) == null) {
+			if (!Modifier.isStatic(field.getModifiers()) && field.get(this) == null) {
 				LOG.error("Please set the {} field in your config YAML", field.getName());
 				passed = false;
 			}

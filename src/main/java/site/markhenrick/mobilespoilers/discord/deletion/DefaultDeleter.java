@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import site.markhenrick.mobilespoilers.discord.util.ConstantRestAction;
 
+import static site.markhenrick.mobilespoilers.discord.deletion.Deleter.DeletionResult.*;
+
 public class DefaultDeleter implements Deleter {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultDeleter.class);
 
@@ -25,23 +27,23 @@ public class DefaultDeleter implements Deleter {
 	public RestAction<DeletionResult> tryDeleteMessage(final String requestingUserId, final String messageId) {
 		try {
 			final var spoiler = repo.getSpoiler(messageId);
-			if (spoiler == null) return resolve(DeletionResult.SPOILER_NOT_FOUND);
-			if (!spoiler.getUserId().equals(requestingUserId)) return resolve(DeletionResult.UNAUTHORISED);
+			if (spoiler == null) return resolve(SPOILER_NOT_FOUND);
+			if (!spoiler.getUserId().equals(requestingUserId)) return resolve(UNAUTHORISED);
 			MessageChannel channel = jda.getTextChannelById(spoiler.getChannelId());
 			if (channel == null) channel = jda.getPrivateChannelById(spoiler.getChannelId());
-			if (channel == null) return resolve(DeletionResult.CHANNEL_NOT_FOUND);
+			if (channel == null) return resolve(CHANNEL_NOT_FOUND);
 			return channel.deleteMessageById(messageId)
 				.map((success) -> {
 					repo.deleteSpoiler(spoiler);
-					return DeletionResult.SUCCESS;
+					return SUCCESS;
 				})
 				.onErrorMap((error) -> {
 					LOG.error("Error deleting spoiler", error);
-					return DeletionResult.UNKNOWN_ERROR;
+					return UNKNOWN_ERROR;
 				});
 		} catch (final RuntimeException e) {
 			LOG.error("Error", e);
-			return resolve(DeletionResult.UNKNOWN_ERROR);
+			return resolve(UNKNOWN_ERROR);
 		}
 	}
 
