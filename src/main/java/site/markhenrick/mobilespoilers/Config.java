@@ -17,7 +17,7 @@ public class Config {
 	private String prefix;
 	private String reaction;
 	private String adminUserId;
-	private boolean showAdminInfo;
+	private Boolean showAdminInfo;
 
 	public String getToken() {
 		return token;
@@ -59,11 +59,11 @@ public class Config {
 		this.adminUserId = adminUserId;
 	}
 
-	public boolean isShowAdminInfo() {
+	public Boolean isShowAdminInfo() {
 		return showAdminInfo;
 	}
 
-	public void setShowAdminInfo(final boolean showAdminInfo) {
+	public void setShowAdminInfo(final Boolean showAdminInfo) {
 		this.showAdminInfo = showAdminInfo;
 	}
 
@@ -73,16 +73,30 @@ public class Config {
 			token, dbPath, prefix, reaction, adminUserId, showAdminInfo);
 	}
 
-	public static Config loadFromYaml(final String filepath) throws IOException {
+	private void validate() throws IllegalAccessException {
+		var passed = true;
+		for (final var field : Config.class.getDeclaredFields()) {
+			if (field.get(this) == null) {
+				LOG.error("Please set the {} field in your config YAML", field.getName());
+				passed = false;
+			}
+		}
+		if (!passed) {
+			throw new IllegalArgumentException("Not all config properties have been set. See error logging above");
+		}
+	}
+
+	public static Config loadFromYaml(final String filepath) throws IOException, IllegalAccessException {
 		final var yaml = new Yaml(new Constructor(Config.class));
 		final var file = new File(filepath);
 		LOG.info("Loading config from {}", file);
 		try (
 			final var stream = new FileInputStream(file)
 		) {
-			final var config = yaml.load(stream);
+			final var config = (Config) yaml.load(stream);
 			LOG.info("Loaded config: {}", config);
-			return (Config) config;
+			config.validate();
+			return config;
 		}
 	}
 }

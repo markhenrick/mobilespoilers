@@ -28,7 +28,7 @@ public final class EntryPoint {
 
 	private EntryPoint() { }
 
-	public static void main(final String... args) throws LoginException, IOException {
+	public static void main(final String... args) throws LoginException, IOException, IllegalAccessException {
 		LOG.info("Starting with args {}", Arrays.toString(args));
 
 		if (args.length > 1) {
