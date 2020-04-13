@@ -6,7 +6,6 @@ import com.jagrosh.jdautilities.examples.command.GuildlistCommand;
 import com.jagrosh.jdautilities.examples.command.PingCommand;
 import com.jagrosh.jdautilities.examples.command.ShutdownCommand;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import site.markhenrick.mobilespoilers.dal.SQLiteSpoilerRepository;
@@ -22,6 +21,8 @@ import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumSet;
+
+import static net.dv8tion.jda.api.utils.cache.CacheFlag.*;
 
 public final class EntryPoint {
 	private static final Logger LOG = LoggerFactory.getLogger(EntryPoint.class);
@@ -56,7 +57,7 @@ public final class EntryPoint {
 		LOG.info("Connecting to Discord...");
 
 		final var jda = new JDABuilder(config.getToken())
-			.setDisabledCacheFlags(EnumSet.of(CacheFlag.EMOTE, CacheFlag.VOICE_STATE, CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS))
+			.setDisabledCacheFlags(EnumSet.of(EMOTE, VOICE_STATE, ACTIVITY, CLIENT_STATUS))
 			.addEventListeners(
 				commandClient,
 				new MetaListener()
