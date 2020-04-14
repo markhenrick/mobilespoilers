@@ -97,16 +97,15 @@ public class Config {
 		}
 	}
 
-	public static Config loadFromYaml(String filepath) throws IOException, IllegalAccessException {
+	public static Config loadFromYaml(String filepath) throws IOException {
 		var yaml = new Yaml(new Constructor(Config.class));
 		var file = new File(filepath);
-		LOG.info("Loading config from {}", file);
+		LOG.trace("Loading config from {}", file);
 		try (
 			var stream = new FileInputStream(file)
 		) {
 			var config = (Config) yaml.load(stream);
-			LOG.info("Loaded config: {}", config);
-			config.validate();
+			LOG.trace("Loaded config: {}", config);
 			return config;
 		}
 	}

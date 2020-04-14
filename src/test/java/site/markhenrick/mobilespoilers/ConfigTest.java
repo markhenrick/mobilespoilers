@@ -57,20 +57,21 @@ class ConfigTest {
 
 		@Test
 		void throwsOnInsufficientProperties() {
-			final var path = "src/test/resources/configs/insufficient.yaml";
-			assertThrows(Exception.class, () -> Config.loadFromYaml(path));
+			assertInvalid("src/test/resources/configs/insufficient.yaml");
 		}
 
 		@Test
 		void throwsOnExcessiveProperties() {
-			final var path = "src/test/resources/configs/excessive.yaml";
-			assertThrows(Exception.class, () -> Config.loadFromYaml(path));
+			assertInvalid("src/test/resources/configs/excessive.yaml");
 		}
 
 		@Test
 		void throwsOnNullProperties() {
-			final var path = "src/test/resources/configs/nulls.yaml";
-			assertThrows(Exception.class, () -> Config.loadFromYaml(path));
+			assertInvalid("src/test/resources/configs/nulls.yaml");
+		}
+
+		private void assertInvalid(String path) {
+			assertThrows(Exception.class, () -> Config.loadFromYaml(path).validate());
 		}
 	}
 }
