@@ -14,7 +14,7 @@ import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import site.markhenrick.mobilespoilers.dal.SpoilerRepository;
-import site.markhenrick.mobilespoilers.util.Barrier;
+import site.markhenrick.mobilespoilers.util.AsyncBarrier;
 
 import java.io.IOException;
 
@@ -50,7 +50,7 @@ public class SpoilCommand extends Command {
 			return;
 		}
 
-		final var barrier = new Barrier<DownloadResult>(attachments.size(), results -> {
+		final var barrier = new AsyncBarrier<DownloadResult>(attachments.size(), results -> {
 			deleteMessage(event);
 			sendSpoilerMessage(event, results);
 		});
