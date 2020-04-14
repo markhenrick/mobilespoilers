@@ -16,7 +16,7 @@ public class DefaultDeleter implements Deleter {
 	private final JDA jda;
 	private final SpoilerRepository repo;
 
-	public DefaultDeleter(final JDA jda, final SpoilerRepository repo) {
+	public DefaultDeleter(JDA jda, SpoilerRepository repo) {
 		LOG.info("Initialised deleter");
 		this.jda = jda;
 		this.repo = repo;
@@ -24,9 +24,9 @@ public class DefaultDeleter implements Deleter {
 	}
 
 	@Override
-	public RestAction<DeletionResult> tryDeleteMessage(final String requestingUserId, final String messageId) {
+	public RestAction<DeletionResult> tryDeleteMessage(String requestingUserId, String messageId) {
 		try {
-			final var spoiler = repo.getSpoiler(messageId);
+			var spoiler = repo.getSpoiler(messageId);
 			if (spoiler == null) return resolve(SPOILER_NOT_FOUND);
 			if (!spoiler.getUserId().equals(requestingUserId)) return resolve(UNAUTHORISED);
 			MessageChannel channel = jda.getTextChannelById(spoiler.getChannelId());
@@ -41,13 +41,13 @@ public class DefaultDeleter implements Deleter {
 					LOG.error("Error deleting spoiler", error);
 					return UNKNOWN_ERROR;
 				});
-		} catch (final RuntimeException e) {
+		} catch (RuntimeException e) {
 			LOG.error("Error", e);
 			return resolve(UNKNOWN_ERROR);
 		}
 	}
 
-	private RestAction<DeletionResult> resolve(final DeletionResult result) {
+	private RestAction<DeletionResult> resolve(DeletionResult result) {
 		return new ConstantRestAction<>(jda, result);
 	}
 }

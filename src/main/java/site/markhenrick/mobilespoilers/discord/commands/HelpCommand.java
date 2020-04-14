@@ -11,14 +11,14 @@ public class HelpCommand implements Consumer<CommandEvent> {
 
 	private final boolean showAdminInfo;
 
-	public HelpCommand(final boolean showAdminInfo) {
+	public HelpCommand(boolean showAdminInfo) {
 		this.showAdminInfo = showAdminInfo;
 	}
 
 	@Override
-	public void accept(final CommandEvent event) {
-		final var client = event.getClient();
-		final var text = new StringBuilder("**Mobile Spoilers** commands:\n\n");
+	public void accept(CommandEvent event) {
+		var client = event.getClient();
+		var text = new StringBuilder("**Mobile Spoilers** commands:\n\n");
 		client.getCommands().stream()
 			.filter(command -> !command.isHidden() && !command.isOwnerCommand())
 			.forEach(command -> text.append(describeCommand(event, command)));
@@ -28,17 +28,17 @@ public class HelpCommand implements Consumer<CommandEvent> {
 				.filter(command -> !command.isHidden() && command.isOwnerCommand())
 				.forEach(command -> text.append(describeCommand(event, command)));
 		}
-		final var message = new MessageBuilder()
+		var message = new MessageBuilder()
 			.setContent(text.toString())
 			.setEmbed(AboutCommand.getEmbed(event, showAdminInfo))
 			.build();
 		event.reply(message);
 	}
 
-	private static String describeCommand(final CommandEvent event,  final Command command) {
-		final var client = event.getClient();
-		final var args = command.getArguments() != null ? String.format(" %s", command.getArguments()) : "";
-		final var help = command.getHelp() != null ? String.format(" - %s", command.getHelp()) : "";
+	private static String describeCommand(CommandEvent event, Command command) {
+		var client = event.getClient();
+		var args = command.getArguments() != null ? String.format(" %s", command.getArguments()) : "";
+		var help = command.getHelp() != null ? String.format(" - %s", command.getHelp()) : "";
 		return String.format("`%s%s%s`%s\n", client.getPrefix(), command.getName(), args, help);
 	}
 }

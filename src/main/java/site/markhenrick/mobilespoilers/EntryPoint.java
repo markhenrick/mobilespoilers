@@ -29,19 +29,19 @@ public final class EntryPoint {
 
 	private EntryPoint() { }
 
-	public static void main(final String... args) throws LoginException, IOException, IllegalAccessException {
+	public static void main(String... args) throws LoginException, IOException, IllegalAccessException {
 		LOG.info("Starting with args {}", Arrays.toString(args));
 
 		if (args.length > 1) {
 			System.err.println("Usage: mobilespoilers [config yaml path]");
 			System.exit(1);
 		}
-		final var configPath = args.length == 0 ? "config.yaml" : args[0];
+		var configPath = args.length == 0 ? "config.yaml" : args[0];
 
-		final var config = Config.loadFromYaml(configPath);
-		final var repo = new SQLiteSpoilerRepository(config.getDbPath());
-		final var eventWaiter = new EventWaiter();
-		final var commandClient = new CommandClientBuilder()
+		var config = Config.loadFromYaml(configPath);
+		var repo = new SQLiteSpoilerRepository(config.getDbPath());
+		var eventWaiter = new EventWaiter();
+		var commandClient = new CommandClientBuilder()
 			.setPrefix(config.getPrefix())
 			.setOwnerId(config.getAdminUserId())
 			.setHelpConsumer(new HelpCommand(config.isShowAdminInfo()))
@@ -56,7 +56,7 @@ public final class EntryPoint {
 
 		LOG.info("Connecting to Discord...");
 
-		final var jda = new JDABuilder(config.getToken())
+		var jda = new JDABuilder(config.getToken())
 			.setDisabledCacheFlags(EnumSet.of(EMOTE, VOICE_STATE, ACTIVITY, CLIENT_STATUS))
 			.addEventListeners(
 				commandClient,
@@ -64,7 +64,7 @@ public final class EntryPoint {
 			)
 			.build();
 
-		final var deleter = new DefaultDeleter(jda, repo);
+		var deleter = new DefaultDeleter(jda, repo);
 		jda.addEventListener(new ReactionDeletionListener(config.getReaction(), deleter));
 		commandClient.addCommand(new DeleteCommand(config.getReaction(), deleter));
 

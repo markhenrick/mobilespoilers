@@ -8,15 +8,15 @@ public class ReactionDeletionListener extends ListenerAdapter {
 	private final String deletionEmoji;
 	private final Deleter deleter;
 
-	public ReactionDeletionListener(final String deletionEmoji, final Deleter deleter) {
+	public ReactionDeletionListener(String deletionEmoji, Deleter deleter) {
 		this.deletionEmoji = deletionEmoji;
 		this.deleter = deleter;
 	}
 
 	@Override
-	public void onMessageReactionAdd(final MessageReactionAddEvent event) {
-		final var author = event.getUser();
-		final var emote = event.getReactionEmote();
+	public void onMessageReactionAdd(MessageReactionAddEvent event) {
+		var author = event.getUser();
+		var emote = event.getReactionEmote();
 		if (author != null && !author.isBot() && emote.isEmoji() && emote.getEmoji().contains(deletionEmoji)) {
 			deleter.tryDeleteMessage(author.getId(), event.getMessageId()).queue();
 		}

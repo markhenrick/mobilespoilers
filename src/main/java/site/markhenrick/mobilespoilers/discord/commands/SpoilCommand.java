@@ -31,7 +31,7 @@ public class SpoilCommand extends Command {
 	private final SpoilerRepository repo;
 	private final String reaction;
 
-	public SpoilCommand(final SpoilerRepository repo, final String reaction) {
+	public SpoilCommand(SpoilerRepository repo, String reaction) {
 		this.name = "spoil";
 		this.aliases = new String[] { "spoiler" };
 		this.arguments = "[optional message - will *not* be hidden]";
@@ -41,33 +41,33 @@ public class SpoilCommand extends Command {
 	}
 
 	@Override
-	protected void execute(final CommandEvent event) {
-		final var message = event.getMessage();
-		final var attachments = message.getAttachments();
+	protected void execute(CommandEvent event) {
+		var message = event.getMessage();
+		var attachments = message.getAttachments();
 
 		if (attachments.isEmpty()) {
 			reportError(event, "Please attach some images to be spoiled");
 			return;
 		}
 
-		final var barrier = new AsyncBarrier<DownloadResult>(attachments.size(), results -> {
+		var barrier = new AsyncBarrier<DownloadResult>(attachments.size(), results -> {
 			deleteMessage(event);
 			sendSpoilerMessage(event, results);
 		});
-		for (final var attachment : attachments) {
-			final var request = new Request.Builder().url(attachment.getUrl()).build();
+		for (var attachment : attachments) {
+			var request = new Request.Builder().url(attachment.getUrl()).build();
 
 			event.getJDA().getHttpClient().newCall(request).enqueue(new Callback() {
 				@Override
-				public void onResponse(final Call call, final Response response) throws IOException {
-					try (final var body = response.body()) {
+				public void onResponse(Call call, Response response) throws IOException {
+					try (var body = response.body()) {
 						assert body != null;
 						barrier.addResult(new DownloadResult(attachment.getFileName(), body.bytes()));
 					}
 				}
 
 				@Override
-				public void onFailure(final Call call, final IOException e) {
+				public void onFailure(Call call, IOException e) {
 					LOG.error("Error downloading attachment", e);
 					reportError(event, "Something went wrong when downloading your attachment");
 				}
@@ -75,15 +75,15 @@ public class SpoilCommand extends Command {
 		}
 	}
 
-	private static void reportError(final CommandEvent event, final String response) {
+	private static void reportError(CommandEvent event, String response) {
 		event.reply(response);
 		event.getMessage().delete().queue();
 	}
 
-	private static void deleteMessage(final CommandEvent event) {
+	private static void deleteMessage(CommandEvent event) {
 		if (!(event.getChannel() instanceof GuildChannel)) return;
-		final var message = event.getMessage();
-		final var channel = (GuildChannel) event.getChannel();
+		var message = event.getMessage();
+		var channel = (GuildChannel) event.getChannel();
 		if (event.getSelfMember().hasPermission(channel, MESSAGE_MANAGE)) {
 			message.delete().queue(success -> {}, error -> {
 				LOG.error("Error deleting message", error);
@@ -94,15 +94,15 @@ public class SpoilCommand extends Command {
 		}
 	}
 
-	private void sendSpoilerMessage(final CommandEvent event, final Iterable<? extends DownloadResult> results) {
-		final var args = event.getArgs();
-		final var channel = event.getChannel();
-		final var author = event.getAuthor();
-		final var spoilerMessage = new MessageBuilder();
+	private void sendSpoilerMessage(CommandEvent event, Iterable<? extends DownloadResult> results) {
+		var args = event.getArgs();
+		var channel = event.getChannel();
+		var author = event.getAuthor();
+		var spoilerMessage = new MessageBuilder();
 		spoilerMessage.setContent(String.format("Spoiler from %s%s", author, !args.isEmpty() ? String.format("\n> %s", args) : ""));
 		var messageAction = spoilerMessage
 			.sendTo(event.getChannel());
-		for (final var result : results) {
+		for (var result : results) {
 			messageAction = messageAction.addFile(result.data, result.originalFilename, AttachmentOption.SPOILER);
 		}
 		messageAction.queue(sentMessage -> {
@@ -115,7 +115,7 @@ public class SpoilCommand extends Command {
 		final String originalFilename;
 		final byte[] data;
 
-		DownloadResult(final String originalFilename, final byte[] data) {
+		DownloadResult(String originalFilename, byte[] data) {
 			this.originalFilename = originalFilename;
 			this.data = data;
 		}

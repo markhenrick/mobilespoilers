@@ -24,7 +24,7 @@ public class Config {
 		return token;
 	}
 
-	public void setToken(final String token) {
+	public void setToken(String token) {
 		this.token = token;
 	}
 
@@ -32,7 +32,7 @@ public class Config {
 		return dbPath;
 	}
 
-	public void setDbPath(final String dbPath) {
+	public void setDbPath(String dbPath) {
 		this.dbPath = dbPath;
 	}
 
@@ -40,7 +40,7 @@ public class Config {
 		return prefix;
 	}
 
-	public void setPrefix(final String prefix) {
+	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
 
@@ -48,7 +48,7 @@ public class Config {
 		return reaction;
 	}
 
-	public void setReaction(final String reaction) {
+	public void setReaction(String reaction) {
 		this.reaction = reaction;
 	}
 
@@ -56,7 +56,7 @@ public class Config {
 		return adminUserId;
 	}
 
-	public void setAdminUserId(final String adminUserId) {
+	public void setAdminUserId(String adminUserId) {
 		this.adminUserId = adminUserId;
 	}
 
@@ -64,29 +64,29 @@ public class Config {
 		return showAdminInfo;
 	}
 
-	public void setShowAdminInfo(final Boolean showAdminInfo) {
+	public void setShowAdminInfo(Boolean showAdminInfo) {
 		this.showAdminInfo = showAdminInfo;
 	}
 
 	@Override
 	public String toString() {
 		try {
-			final var sb = new StringBuilder("{\n");
-			for (final var field : Config.class.getDeclaredFields()) {
+			var sb = new StringBuilder("{\n");
+			for (var field : Config.class.getDeclaredFields()) {
 				if (!Modifier.isStatic(field.getModifiers())) {
 					sb.append('\t').append(field.getName()).append(": ").append(field.get(this)).append(",\n");
 				}
 			}
 			sb.append("}");
 			return sb.toString();
-		} catch (final IllegalAccessException e) {
+		} catch (IllegalAccessException e) {
 			return "Unable to render config to string - reflective access denied";
 		}
 	}
 
 	public void validate() throws IllegalAccessException {
 		var passed = true;
-		for (final var field : Config.class.getDeclaredFields()) {
+		for (var field : Config.class.getDeclaredFields()) {
 			if (!Modifier.isStatic(field.getModifiers()) && field.get(this) == null) {
 				LOG.error("Please set the {} field in your config YAML", field.getName());
 				passed = false;
@@ -97,14 +97,14 @@ public class Config {
 		}
 	}
 
-	public static Config loadFromYaml(final String filepath) throws IOException, IllegalAccessException {
-		final var yaml = new Yaml(new Constructor(Config.class));
-		final var file = new File(filepath);
+	public static Config loadFromYaml(String filepath) throws IOException, IllegalAccessException {
+		var yaml = new Yaml(new Constructor(Config.class));
+		var file = new File(filepath);
 		LOG.info("Loading config from {}", file);
 		try (
-			final var stream = new FileInputStream(file)
+			var stream = new FileInputStream(file)
 		) {
-			final var config = (Config) yaml.load(stream);
+			var config = (Config) yaml.load(stream);
 			LOG.info("Loaded config: {}", config);
 			config.validate();
 			return config;

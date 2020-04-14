@@ -12,7 +12,7 @@ public class ConstantRestAction<T> implements RestAction<T> {
 	private final JDA jda;
 	private final T result;
 
-	public ConstantRestAction(final JDA jda, final T result) {
+	public ConstantRestAction(JDA jda, T result) {
 		this.jda = jda;
 		this.result = result;
 	}
@@ -23,28 +23,28 @@ public class ConstantRestAction<T> implements RestAction<T> {
 	}
 
 	@Override
-	public RestAction<T> setCheck(final BooleanSupplier checks) {
+	public RestAction<T> setCheck(BooleanSupplier checks) {
 		return this;
 	}
 
 	@Override
-	public void queue(final Consumer<? super T> success, final Consumer<? super Throwable> failure) {
+	public void queue(Consumer<? super T> success, Consumer<? super Throwable> failure) {
 		if (success != null) success.accept(result);
 	}
 
 	@Override
-	public T complete(final boolean shouldQueue) {
+	public T complete(boolean shouldQueue) {
 		return result;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public CompletableFuture<T> submit(final boolean shouldQueue) {
+	public CompletableFuture<T> submit(boolean shouldQueue) {
 		try {
-			final var privateConstructor = CompletableFuture.class.getDeclaredConstructor(Object.class);
+			var privateConstructor = CompletableFuture.class.getDeclaredConstructor(Object.class);
 			privateConstructor.setAccessible(true); // Is there a dab emoji yet?
 			return privateConstructor.newInstance(result);
-		} catch (final NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
 	}

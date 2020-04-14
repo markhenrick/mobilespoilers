@@ -17,9 +17,9 @@ public class SQLiteSpoilerRepository implements SpoilerRepository {
 
 	private final DSLContext create;
 
-	public SQLiteSpoilerRepository(final String dbPath) {
+	public SQLiteSpoilerRepository(String dbPath) {
 		LOG.info("Constructing with { dbPath = {} }", dbPath);
-		final var ds = new SQLiteDataSource();
+		var ds = new SQLiteDataSource();
 		ds.setUrl(String.format("jdbc:sqlite:%s", dbPath));
 		Flyway.configure().dataSource(ds).load().migrate();
 		this.create = DSL.using(ds, SQLDialect.SQLITE);
@@ -27,9 +27,9 @@ public class SQLiteSpoilerRepository implements SpoilerRepository {
 	}
 
 	@Override
-	public void recordSpoiler(final String messageId, final String channelId, final String userId) {
+	public void recordSpoiler(String messageId, String channelId, String userId) {
 		LOG.trace("Recording spoiler { messageId: {}, channelId: {}, userId: {} }", messageId, channelId, userId);
-		final var newSpoiler = create.newRecord(SPOILERS);
+		var newSpoiler = create.newRecord(SPOILERS);
 		newSpoiler.setMessageId(messageId);
 		newSpoiler.setChannelId(channelId);
 		newSpoiler.setUserId(userId);
@@ -38,16 +38,16 @@ public class SQLiteSpoilerRepository implements SpoilerRepository {
 
 	@Override
 	@Nullable
-	public Spoiler getSpoiler(final String messageId) {
+	public Spoiler getSpoiler(String messageId) {
 		return create.fetchOne(SPOILERS, SPOILERS.MESSAGE_ID.eq(messageId));
 	}
 
 	@Override
-	public void deleteSpoiler(final Spoiler spoiler) {
+	public void deleteSpoiler(Spoiler spoiler) {
 		LOG.trace("Deleting spoiler {}", spoiler);
 		try {
 			spoiler.delete();
-		} catch (final RuntimeException e) {
+		} catch (RuntimeException e) {
 			LOG.error("Error while deleting spoiler", e);
 		}
 	}

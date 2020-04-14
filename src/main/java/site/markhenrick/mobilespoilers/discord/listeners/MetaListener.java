@@ -12,39 +12,39 @@ public class MetaListener extends ListenerAdapter {
 	private static final Logger LOG = LoggerFactory.getLogger(MetaListener.class);
 
 	@Override
-	public void onReady(final ReadyEvent event) {
+	public void onReady(ReadyEvent event) {
 		LOG.info("Ready. Logged in as {}. {}/{} guilds available",
 			event.getJDA().getSelfUser(), event.getGuildAvailableCount(), event.getGuildTotalCount());
 		LOG.info("Invite link: {}", AboutCommand.getInviteLink(event.getJDA().getSelfUser().getId()));
 	}
 
 	@Override
-	public void onShutdown(final ShutdownEvent event) {
+	public void onShutdown(ShutdownEvent event) {
 		LOG.warn("Shutting down");
 	}
 
 	@Override
-	public void onGuildJoin(final GuildJoinEvent event) {
+	public void onGuildJoin(GuildJoinEvent event) {
 		LOG.info("Joined guild {}", event.getGuild());
 	}
 
 	@Override
-	public void onGuildLeave(final GuildLeaveEvent event) {
+	public void onGuildLeave(GuildLeaveEvent event) {
 		LOG.info("Left guild {}", event.getGuild());
 	}
 
 	@Override
-	public void onGuildUnavailable(final GuildUnavailableEvent event) {
+	public void onGuildUnavailable(GuildUnavailableEvent event) {
 		LOG.info("Guild is unavailable: {}", event.getGuild());
 	}
 
 	@Override
-	public void onUnavailableGuildJoined(final UnavailableGuildJoinedEvent event) {
+	public void onUnavailableGuildJoined(UnavailableGuildJoinedEvent event) {
 		LOG.warn("Joined unavailable guild: {}", event.getGuildId());
 	}
 
 	@Override
-	public void onUnavailableGuildLeave(final UnavailableGuildLeaveEvent event) {
+	public void onUnavailableGuildLeave(UnavailableGuildLeaveEvent event) {
 		LOG.info("Left unavailable guild: {}", event.getGuildId());
 	}
 }

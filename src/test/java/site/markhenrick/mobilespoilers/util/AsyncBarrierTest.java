@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class AsyncBarrierTest {
 	@Test
 	void runsCallback() {
-		final var callbackRan = new AtomicBoolean(false);
-		final var barrier = new AsyncBarrier<Integer>(1, unused -> callbackRan.set(true));
+		var callbackRan = new AtomicBoolean(false);
+		var barrier = new AsyncBarrier<Integer>(1, unused -> callbackRan.set(true));
 		barrier.addResult(1);
 		//noinspection ConstantConditions
 		assertThat(callbackRan).isTrue();
@@ -21,7 +21,7 @@ class AsyncBarrierTest {
 
 	@Test
 	void suppliesResult() {
-		final var barrier = new AsyncBarrier<Integer>(2, results -> assertThat(results).isEqualTo(List.of(1, 2)));
+		var barrier = new AsyncBarrier<Integer>(2, results -> assertThat(results).isEqualTo(List.of(1, 2)));
 		barrier.addResult(1);
 		barrier.addResult(2);
 	}
@@ -34,7 +34,7 @@ class AsyncBarrierTest {
 
 	@Test
 	void runsCallbackImmediatelyIfLimitIsZero() {
-		final var callbackRan = new AtomicBoolean(false);
+		var callbackRan = new AtomicBoolean(false);
 		//noinspection ResultOfObjectAllocationIgnored
 		new AsyncBarrier<Integer>(0, results -> {
 			callbackRan.set(true);
@@ -46,7 +46,7 @@ class AsyncBarrierTest {
 
 	@Test
 	void throwsExceptionOnOverflow() {
-		final var barrier = new AsyncBarrier<Integer>(2, unused -> {});
+		var barrier = new AsyncBarrier<Integer>(2, unused -> {});
 		barrier.addResult(1);
 		barrier.addResult(2);
 		assertThrows(IllegalStateException.class, () -> barrier.addResult(3));

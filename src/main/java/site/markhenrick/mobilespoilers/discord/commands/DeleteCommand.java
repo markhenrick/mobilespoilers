@@ -19,7 +19,7 @@ public class DeleteCommand extends Command {
 
 	private final Deleter deleter;
 
-	public DeleteCommand(final String reaction, final Deleter deleter) {
+	public DeleteCommand(String reaction, Deleter deleter) {
 		this.name = "delete";
 		this.help = String.format("Delete your spoiler by ID (you can also just react to it with %s)", reaction);
 		this.arguments = "<spoiler message ID>";
@@ -28,8 +28,8 @@ public class DeleteCommand extends Command {
 	}
 
 	@Override
-	protected void execute(final CommandEvent event) {
-		final var args = event.getArgs();
+	protected void execute(CommandEvent event) {
+		var args = event.getArgs();
 		if (args.isEmpty()) {
 			event.reply("Please provide the ID of the spoiler that you want to delete");
 			return;

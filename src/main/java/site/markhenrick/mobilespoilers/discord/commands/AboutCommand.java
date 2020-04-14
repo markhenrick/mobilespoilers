@@ -23,7 +23,7 @@ public class AboutCommand extends Command {
 
 	private final boolean showAdminInfo;
 
-	public AboutCommand(final boolean showAdminInfo) {
+	public AboutCommand(boolean showAdminInfo) {
 		this.name = "about";
 		this.aliases = new String[] { "info", "invite" };
 		this.help = "show info about the bot and its admin, and get an invite link to add it to your server";
@@ -34,23 +34,23 @@ public class AboutCommand extends Command {
 	}
 
 	@Override
-	protected void execute(final CommandEvent event) {
+	protected void execute(CommandEvent event) {
 		event.reply(getEmbed(event, showAdminInfo));
 	}
 
-	static MessageEmbed getEmbed(final CommandEvent event, final boolean showAdminInfo) {
-		final var botId = event.getSelfUser().getId();
-		final var guildCount = event.getClient().getTotalGuilds();
+	static MessageEmbed getEmbed(CommandEvent event, boolean showAdminInfo) {
+		var botId = event.getSelfUser().getId();
+		var guildCount = event.getClient().getTotalGuilds();
 
-		final var embed = new EmbedBuilder();
+		var embed = new EmbedBuilder();
 		embed.setTitle("Mobile Spoilers", ABOUT_LINK);
 		embed.appendDescription(DESCRIPTION);
 		embed.appendDescription("Click the title above for more info");
 		embed.addField("Servers", Integer.toString(guildCount), true);
 		if (showAdminInfo) {
-			final var ownerId = event.getClient().getOwnerId();
-			final var owner = event.getJDA().getUserById(ownerId);
-			final var ownerName = owner != null ? owner.getAsTag() : null;
+			var ownerId = event.getClient().getOwnerId();
+			var owner = event.getJDA().getUserById(ownerId);
+			var ownerName = owner != null ? owner.getAsTag() : null;
 			if (ownerName != null) {
 				embed.addField("Admin", ownerName, true);
 			}
@@ -59,7 +59,7 @@ public class AboutCommand extends Command {
 		return embed.build();
 	}
 
-	public static String getInviteLink(final String botId) {
+	public static String getInviteLink(String botId) {
 		return String.format("https://discordapp.com/oauth2/authorize?client_id=%s&scope=bot&permissions=%s", botId, INVITE_BITFIELD);
 	}
 }

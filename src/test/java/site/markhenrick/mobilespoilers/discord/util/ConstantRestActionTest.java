@@ -21,7 +21,7 @@ class ConstantRestActionTest {
 	class Queue {
 		@Test
 		void usesCallback() {
-			final var callbackExecuted = new AtomicBoolean(false);
+			var callbackExecuted = new AtomicBoolean(false);
 			restAction.queue(actualResult -> callbackExecuted.set(true));
 			//noinspection ConstantConditions
 			assertThat(callbackExecuted).isTrue();

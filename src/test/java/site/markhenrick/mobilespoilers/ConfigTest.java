@@ -14,7 +14,7 @@ class ConfigTest {
 	class Validation {
 		@Test
 		void validatesFieldsAreNotNull() {
-			final var config = new Config();
+			var config = new Config();
 			// All fields are null
 			assertThrows(IllegalArgumentException.class, config::validate);
 		}
@@ -46,7 +46,7 @@ class ConfigTest {
 	class YamlLoad {
 		@Test
 		void loadsYaml() throws Exception {
-			final var loadedConfig = Config.loadFromYaml("config.example.yaml");
+			var loadedConfig = Config.loadFromYaml("config.example.yaml");
 			assertThat(loadedConfig.getToken()).isEqualTo("sdofjowenerkfj");
 			assertThat(loadedConfig.getDbPath()).isEqualTo("spoilers.db");
 			assertThat(loadedConfig.getPrefix()).isEqualTo("!");

@@ -17,7 +17,7 @@ public class AsyncBarrier<T> {
 	 * @param limit The number of results to expect. If this is 0, `callback` is run immediately on an empty list
 	 * @param callback The consumer to run when the barrier is full. The supplied list is never null
 	 */
-	public AsyncBarrier(final int limit, final Consumer<? super List<T>> callback) {
+	public AsyncBarrier(int limit, Consumer<? super List<T>> callback) {
 		this.limit = limit;
 		this.callback = callback;
 		this.results = new ArrayList<>(limit);
@@ -32,7 +32,7 @@ public class AsyncBarrier<T> {
 	 * @param result The result to add
 	 * @throws IllegalStateException If the barrier is already full
 	 */
-	public synchronized void addResult(final T result) {
+	public synchronized void addResult(T result) {
 		if (results.size() == limit) throw new IllegalStateException();
 		results.add(result);
 		if (results.size() == limit) {
