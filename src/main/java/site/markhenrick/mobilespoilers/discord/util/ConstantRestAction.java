@@ -3,7 +3,6 @@ package site.markhenrick.mobilespoilers.discord.util;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.requests.RestAction;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -37,15 +36,10 @@ public class ConstantRestAction<T> implements RestAction<T> {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public CompletableFuture<T> submit(boolean shouldQueue) {
-		try {
-			var privateConstructor = CompletableFuture.class.getDeclaredConstructor(Object.class);
-			privateConstructor.setAccessible(true); // Is there a dab emoji yet?
-			return privateConstructor.newInstance(result);
-		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-			throw new RuntimeException(e);
-		}
+		var future = new CompletableFuture<T>();
+		future.complete(result);
+		return future;
 	}
 }
