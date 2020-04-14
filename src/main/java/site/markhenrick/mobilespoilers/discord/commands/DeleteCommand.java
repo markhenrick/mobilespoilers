@@ -10,7 +10,7 @@ import site.markhenrick.mobilespoilers.discord.deletion.Deleter;
 
 @CommandInfo(
 	name = "Delete",
-	description = "Delete your a spoiler by ID"
+	description = "Delete your spoiler by ID"
 )
 @Author("Mark Henrick")
 public class DeleteCommand extends Command {
