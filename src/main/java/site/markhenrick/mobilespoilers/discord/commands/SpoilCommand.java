@@ -50,9 +50,12 @@ public class SpoilCommand extends Command {
 			return;
 		}
 
-		var barrier = new AsyncBarrier<DownloadResult>(attachments.size(), results -> {
+		var barrier = new AsyncBarrier<DownloadResult, IOException>(attachments.size(), results -> {
 			deleteMessage(event);
 			sendSpoilerMessage(event, results);
+		}, e -> {
+			LOG.error("Error downloading attachment", e);
+			reportError(event, "Something went wrong when downloading your attachment");
 		});
 		for (var attachment : attachments) {
 			var request = new Request.Builder().url(attachment.getUrl()).build();
@@ -68,8 +71,7 @@ public class SpoilCommand extends Command {
 
 				@Override
 				public void onFailure(Call call, IOException e) {
-					LOG.error("Error downloading attachment", e);
-					reportError(event, "Something went wrong when downloading your attachment");
+					barrier.error(e);
 				}
 			});
 		}
