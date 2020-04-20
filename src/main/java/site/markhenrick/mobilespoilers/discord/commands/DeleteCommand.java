@@ -7,6 +7,7 @@ import com.jagrosh.jdautilities.examples.doc.Author;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import site.markhenrick.mobilespoilers.discord.deletion.Deleter;
+import site.markhenrick.mobilespoilers.discord.deletion.DeletionException;
 
 @CommandInfo(
 	name = "Delete",
@@ -15,7 +16,6 @@ import site.markhenrick.mobilespoilers.discord.deletion.Deleter;
 @Author("Mark Henrick")
 public class DeleteCommand extends Command {
 	private static final Logger LOG = LoggerFactory.getLogger(DeleteCommand.class);
-	private static final String ERROR_TEXT = "Sorry, an unknown error occurred when deleting that spoiler";
 
 	private final Deleter deleter;
 
@@ -35,29 +35,13 @@ public class DeleteCommand extends Command {
 			return;
 		}
 		deleter.tryDeleteMessage(event.getAuthor().getId(), args)
-			.queue(result -> {
-				switch (result) {
-					case SUCCESS:
-						break;
-					case SPOILER_NOT_FOUND:
-						event.reply("I have no record of that spoiler");
-						break;
-					case UNAUTHORISED:
-						event.reply("Only the user who made that spoiler may delete it");
-						break;
-					case CHANNEL_NOT_FOUND:
-						event.reply("Sorry, I no longer have access to the channel so cannot delete the spoiler");
-						break;
-					case UNKNOWN_ERROR:
-						event.reply(ERROR_TEXT);
-						break;
-					default:
-						LOG.error("Unexpected result: {}", result);
-						event.reply(ERROR_TEXT);
+			.queue(result -> {}, error -> {
+				if (error instanceof DeletionException) {
+					event.reply(error.getMessage());
+				} else {
+					LOG.error("RestAction from deleter threw", error);
+					event.reply("Sorry, an unknown error occurred when deleting that spoiler");
 				}
-			}, error -> {
-				LOG.error("RestAction from deleter threw", error);
-				event.reply(ERROR_TEXT);
 			});
 	}
 }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class ConstantRestActionTest {
 	private static final String EXPECTED_RESULT = "result";
@@ -22,7 +23,7 @@ class ConstantRestActionTest {
 		@Test
 		void usesCallback() {
 			var callbackExecuted = new AtomicBoolean(false);
-			restAction.queue(actualResult -> callbackExecuted.set(true));
+			restAction.queue(actualResult -> callbackExecuted.set(true), e -> fail());
 			//noinspection ConstantConditions
 			assertThat(callbackExecuted).isTrue();
 		}
