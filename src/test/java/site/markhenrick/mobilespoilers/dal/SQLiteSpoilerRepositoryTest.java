@@ -26,7 +26,7 @@ class SQLiteSpoilerRepositoryTest {
 		assertThat(retrievedSpoiler1.getMessageId()).isEqualTo("1");
 		assertThat(retrievedSpoiler1.getChannelId()).isEqualTo("2");
 		assertThat(retrievedSpoiler1.getUserId()).isEqualTo("3");
-		repo.deleteSpoiler(retrievedSpoiler1);
+		repo.deleteSpoiler("1");
 		var retrievedSpoiler2 = repo.getSpoiler("1");
 		assertThat(retrievedSpoiler2).isNull();
 	}

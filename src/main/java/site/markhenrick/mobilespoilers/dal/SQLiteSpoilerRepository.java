@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteDataSource;
 import site.markhenrick.mobilespoilers.dal.jooqgenerated.tables.records.Spoiler;
 
+import static org.jooq.impl.DSL.field;
 import static site.markhenrick.mobilespoilers.dal.jooqgenerated.Tables.SPOILERS;
 
 public class SQLiteSpoilerRepository implements SpoilerRepository {
@@ -43,10 +44,10 @@ public class SQLiteSpoilerRepository implements SpoilerRepository {
 	}
 
 	@Override
-	public void deleteSpoiler(Spoiler spoiler) {
-		LOG.trace("Deleting spoiler {}", spoiler);
+	public void deleteSpoiler(String messageId) {
+		LOG.trace("Deleting spoiler {}", messageId);
 		try {
-			spoiler.delete();
+			create.deleteFrom(SPOILERS).where(field(SPOILERS.MESSAGE_ID).eq(messageId)).execute();
 		} catch (RuntimeException e) {
 			LOG.error("Error while deleting spoiler", e);
 		}

@@ -7,5 +7,5 @@ public interface SpoilerRepository {
 
 	Spoiler getSpoiler(String messageId); // TODO use non-jooq DTO
 
-	void deleteSpoiler(Spoiler spoiler);
+	void deleteSpoiler(String messageId);
 }

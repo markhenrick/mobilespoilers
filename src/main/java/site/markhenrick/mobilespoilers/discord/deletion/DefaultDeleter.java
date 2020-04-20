@@ -6,7 +6,9 @@ import net.dv8tion.jda.api.requests.RestAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import site.markhenrick.mobilespoilers.dal.SpoilerRepository;
+import site.markhenrick.mobilespoilers.dal.jooqgenerated.tables.records.Spoiler;
 import site.markhenrick.mobilespoilers.discord.util.ConstantErrorRestAction;
+import site.markhenrick.mobilespoilers.discord.util.ConstantRestAction;
 import site.markhenrick.mobilespoilers.util.Unit;
 
 import static site.markhenrick.mobilespoilers.discord.deletion.DeletionException.*;
@@ -27,25 +29,39 @@ public class DefaultDeleter implements Deleter {
 
 	@Override
 	public RestAction<Unit> tryDeleteMessage(String requestingUserId, String messageId) {
-		try {
-			var spoiler = repo.getSpoiler(messageId);
-			if (spoiler == null) return error(spoilerNotFound());
-			if (!spoiler.getUserId().equals(requestingUserId)) return error(unauthorised());
-			MessageChannel channel = jda.getTextChannelById(spoiler.getChannelId());
-			if (channel == null) channel = jda.getPrivateChannelById(spoiler.getChannelId());
-			if (channel == null) return error(channelNotFound());
-			return channel.deleteMessageById(messageId)
-				.map(success -> {
-					repo.deleteSpoiler(spoiler);
-					return UNIT;
-				});
-		} catch (RuntimeException e) {
-			LOG.error("Error", e);
-			return error(e);
-		}
+		return getSpoiler(messageId)
+			.flatMap(spoiler -> checkAuthority(requestingUserId, spoiler))
+			.flatMap(this::getChannel)
+			.flatMap(channel -> channel.deleteMessageById(messageId))
+			.map(success -> {
+				repo.deleteSpoiler(messageId);
+				return UNIT;
+			});
 	}
 
-	private RestAction<Unit> error(RuntimeException exception) {
+	private RestAction<Spoiler> getSpoiler(String messageId) {
+		var spoiler = repo.getSpoiler(messageId);
+		return spoiler != null ? resolve(spoiler) : error(spoilerNotFound());
+	}
+
+	private RestAction<Spoiler> checkAuthority(String requestingUserId, Spoiler spoiler) {
+		return spoiler.getUserId().equals(requestingUserId) ? resolve(spoiler) : error(unauthorised());
+	}
+
+	private RestAction<MessageChannel> getChannel(Spoiler spoiler) {
+		var id = spoiler.getChannelId();
+		var guildChannel = jda.getTextChannelById(id);
+		if (guildChannel != null) return resolve(guildChannel);
+		var privateChannel = jda.getPrivateChannelById(id);
+		if (privateChannel != null) return resolve(privateChannel);
+		return error(channelNotFound());
+	}
+
+	private <T> RestAction<T> resolve(T result) {
+		return new ConstantRestAction<>(jda, result);
+	}
+
+	private <T> RestAction<T> error(RuntimeException exception) {
 		return new ConstantErrorRestAction<>(jda, exception);
 	}
 }
