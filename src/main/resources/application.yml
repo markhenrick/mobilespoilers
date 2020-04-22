@@ -1,0 +1,4 @@
+mobilespoilers:
+  show-admin-info: true
+  deletion-emoji: "🗑️"
+  prefix: "!"

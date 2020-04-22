@@ -3,16 +3,19 @@ package site.markhenrick.mobilespoilers.discord.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.MessageBuilder;
+import org.springframework.stereotype.Service;
+import site.markhenrick.mobilespoilers.discord.service.BotInfoService;
 
 import java.util.function.Consumer;
 
+@Service
 public class HelpCommand implements Consumer<CommandEvent> {
 	// This code has plenty of areas for optimisation, but it's unlikely to need it
 
-	private final boolean showAdminInfo;
+	private final BotInfoService botInfoService;
 
-	public HelpCommand(boolean showAdminInfo) {
-		this.showAdminInfo = showAdminInfo;
+	public HelpCommand(BotInfoService botInfoService) {
+		this.botInfoService = botInfoService;
 	}
 
 	@Override
@@ -30,7 +33,7 @@ public class HelpCommand implements Consumer<CommandEvent> {
 		}
 		var message = new MessageBuilder()
 			.setContent(text.toString())
-			.setEmbed(AboutCommand.getEmbed(event, showAdminInfo))
+			.setEmbed(botInfoService.getAboutEmbed())
 			.build();
 		event.reply(message);
 	}

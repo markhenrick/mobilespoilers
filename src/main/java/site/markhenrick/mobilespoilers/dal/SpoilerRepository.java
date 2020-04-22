@@ -1,11 +1,7 @@
 package site.markhenrick.mobilespoilers.dal;
 
-import site.markhenrick.mobilespoilers.dal.jooqgenerated.tables.records.Spoiler;
+import org.springframework.data.repository.CrudRepository;
 
-public interface SpoilerRepository {
-	void recordSpoiler(String messageId, String channelId, String userId);
-
-	Spoiler getSpoiler(String messageId); // TODO use non-jooq DTO
-
-	void deleteSpoiler(String messageId);
+@SuppressWarnings("InterfaceNeverImplemented")
+public interface SpoilerRepository extends CrudRepository<Spoiler, Long> {
 }

@@ -1,11 +1,8 @@
 package site.markhenrick.mobilespoilers.util;
 
-/**
- * ()
- */
-@SuppressWarnings("InstantiationOfUtilityClass")
 public final class Unit {
 	private Unit() {}
 
+	@SuppressWarnings("InstantiationOfUtilityClass")
 	public static final Unit UNIT = new Unit();
 }

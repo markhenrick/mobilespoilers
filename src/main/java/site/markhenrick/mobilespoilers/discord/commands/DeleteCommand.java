@@ -1,47 +1,58 @@
 package site.markhenrick.mobilespoilers.discord.commands;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.doc.standard.CommandInfo;
-import com.jagrosh.jdautilities.examples.doc.Author;
+import net.dv8tion.jda.api.requests.RestAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import site.markhenrick.mobilespoilers.MobileSpoilersConfig;
+import site.markhenrick.mobilespoilers.discord.BotException;
 import site.markhenrick.mobilespoilers.discord.deletion.Deleter;
-import site.markhenrick.mobilespoilers.discord.deletion.DeletionException;
+import site.markhenrick.mobilespoilers.discord.util.RestActionFactory;
 
-@CommandInfo(
-	name = "Delete",
-	description = "Delete your spoiler by ID"
-)
-@Author("Mark Henrick")
-public class DeleteCommand extends Command {
+@Service
+public class DeleteCommand extends SelfRegisteringCommand {
+	private static final String ERROR_HELP_MESSAGE = "Usage: delete <message ID>";
+
 	private static final Logger LOG = LoggerFactory.getLogger(DeleteCommand.class);
 
 	private final Deleter deleter;
+	private final RestActionFactory restActionFactory;
 
-	public DeleteCommand(String reaction, Deleter deleter) {
+	public DeleteCommand(MobileSpoilersConfig config, Deleter deleter, RestActionFactory restActionFactory) {
 		this.name = "delete";
-		this.help = String.format("Delete your spoiler by ID (you can also just react to it with %s)", reaction);
+		this.help = String.format("Delete your spoiler by ID (you can also just react to it with %s)", config.getDeletionEmoji());
 		this.arguments = "<spoiler message ID>";
 		this.guildOnly = false;
 		this.deleter = deleter;
+		this.restActionFactory = restActionFactory;
 	}
 
 	@Override
 	protected void execute(CommandEvent event) {
-		var args = event.getArgs();
-		if (args.isEmpty()) {
-			event.reply("Please provide the ID of the spoiler that you want to delete");
-			return;
-		}
-		deleter.tryDeleteMessage(event.getAuthor().getId(), args)
+		assertArgumentLength(event)
+			.flatMap(this::parseLong)
+			.flatMap(messageId -> deleter.tryDeleteMessage(event.getAuthor().getIdLong(), messageId))
 			.queue(result -> {}, error -> {
-				if (error instanceof DeletionException) {
+				if (error instanceof BotException) {
 					event.reply(error.getMessage());
 				} else {
 					LOG.error("RestAction from deleter threw", error);
 					event.reply("Sorry, an unknown error occurred when deleting that spoiler");
 				}
 			});
+	}
+
+	private RestAction<String> assertArgumentLength(CommandEvent event) {
+		@SuppressWarnings("ProblematicWhitespace") var args = event.getArgs().split(" ");
+		return restActionFactory.fromBoolean(args.length == 1, args[0], ERROR_HELP_MESSAGE);
+	}
+
+	private RestAction<Long> parseLong(String longString) {
+		try {
+			return restActionFactory.resolve(Long.parseLong(longString));
+		} catch (NumberFormatException e) {
+			return restActionFactory.error(ERROR_HELP_MESSAGE);
+		}
 	}
 }

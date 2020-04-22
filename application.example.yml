@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://host/database
+    username: user
+    password: password
+mobilespoilers:
+  admin-user-id: 12345
+  token: abcdef
