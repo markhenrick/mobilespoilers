@@ -42,35 +42,37 @@ public class JDAHolder {
 		this.helpCommand = helpCommand;
 		this.eventListenerQueue = new ArrayList<>();
 		this.commandQueue = new ArrayList<>();
-		LOG.info("Initialised");
 	}
 
 	public void addEventListener(Object listener) {
 		if (jda != null) {
+			LOG.debug("Adding listener {} directly", listener.getClass());
 			jda.addEventListener(listener);
 		} else {
+			LOG.debug("Queueing listener {} to add later", listener.getClass());
 			eventListenerQueue.add(listener);
 		}
 	}
 
 	public void addCommand(Command command) {
 		if (jda != null) {
+			LOG.debug("Adding command {} directly", command.getClass());
 			commandClient.addCommand(command);
 		} else {
+			LOG.debug("Queueing command {} to add later", command.getClass());
 			commandQueue.add(command);
 		}
 	}
 
 	public void start() throws LoginException {
+		LOG.info("Starting JDA");
 		if (jda != null) throw new IllegalStateException("Already running");
-
-		var waiter = new EventWaiter();
 
 		this.commandClient = new CommandClientBuilder()
 			.setPrefix(config.getPrefix())
 			.setOwnerId(config.getAdminUserId())
 			.setHelpConsumer(helpCommand)
-			.addCommands(new GuildlistCommand(waiter), new ShutdownCommand())
+			.addCommands(new GuildlistCommand(new EventWaiter()), new ShutdownCommand())
 			.addCommands(commandQueue.toArray(new Command[0]))
 			.build();
 

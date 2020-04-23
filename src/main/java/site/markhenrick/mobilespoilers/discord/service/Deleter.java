@@ -23,7 +23,6 @@ public class Deleter {
 		this.jdaFacade = jdaFacade;
 		this.restActionFactory = restActionFactory;
 		this.repo = repo;
-		LOG.info("Initialised");
 	}
 
 	public RestAction<Unit> tryDeleteMessage(long requestingUserId, long messageId) {
@@ -32,6 +31,7 @@ public class Deleter {
 			.flatMap(spoiler -> getChannel(spoiler.getChannelId()))
 			.flatMap(channel -> channel.deleteMessageById(messageId))
 			.map(success -> {
+				LOG.debug("Deleting spoiler id {}", messageId);
 				repo.deleteById(messageId);
 				return UNIT;
 			});

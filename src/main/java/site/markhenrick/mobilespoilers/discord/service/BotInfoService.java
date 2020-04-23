@@ -2,6 +2,8 @@ package site.markhenrick.mobilespoilers.discord.service;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ public class BotInfoService {
 	private static final String ABOUT_LINK = "https://github.com/markhenrick/mobilespoilers";
 	private static final long INVITE_BITFIELD = getRaw(
 		MESSAGE_ADD_REACTION, VIEW_CHANNEL, MESSAGE_WRITE, MESSAGE_MANAGE, MESSAGE_EMBED_LINKS, MESSAGE_ATTACH_FILES, MESSAGE_EXT_EMOJI);
+
+	private static final Logger LOG = LoggerFactory.getLogger(BotInfoService.class);
 
 	private final MobileSpoilersConfig config;
 	private final SpoilerRepository repo;
@@ -49,6 +53,8 @@ public class BotInfoService {
 			var ownerName = owner != null ? owner.getAsTag() : null;
 			if (ownerName != null) {
 				embed.addField("Admin", ownerName, true);
+			} else {
+				LOG.warn("Could not find owner user");
 			}
 		}
 		embed.addField("Invite link", String.format("[`Click here`](%s)", getInviteLink()), true);

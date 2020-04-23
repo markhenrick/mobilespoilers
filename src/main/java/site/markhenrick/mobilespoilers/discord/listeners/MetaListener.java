@@ -16,7 +16,6 @@ public class MetaListener extends SelfRegisteringListener {
 
 	public MetaListener(BotInfoService botInfoService) {
 		this.botInfoService = botInfoService;
-		LOG.info("Initialised");
 	}
 
 	@Override

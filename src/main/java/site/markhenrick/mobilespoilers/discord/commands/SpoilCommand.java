@@ -109,6 +109,7 @@ public class SpoilCommand extends SelfRegisteringCommand {
 			spoiler.setMessageId(sentMessage.getIdLong());
 			spoiler.setChannelId(channel.getIdLong());
 			spoiler.setUserId(author.getIdLong());
+			LOG.debug("Recording spoiler {}", spoiler);
 			repo.save(spoiler);
 		});
 	}

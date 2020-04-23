@@ -18,7 +18,6 @@ public class ReactionDeletionListener extends SelfRegisteringListener {
 	public ReactionDeletionListener(MobileSpoilersConfig config, Deleter deleter) {
 		this.config = config;
 		this.deleter = deleter;
-		LOG.info("Initialised");
 	}
 
 	@Override
@@ -26,7 +25,8 @@ public class ReactionDeletionListener extends SelfRegisteringListener {
 		var author = event.getUser();
 		var emote = event.getReactionEmote();
 		if (!author.isBot() && emote.isEmoji() && emote.getEmoji().contains(config.getDeletionEmoji())) {
-			LOG.debug("Deleting message due to reaction {}", event.getMessageId());
+			LOG.trace("TryDeleting message due to reaction on message {} from {} in {} of {}",
+				event.getMessageId(), event.getUser(), event.getChannel(), event.getGuild());
 			deleter.tryDeleteMessage(author.getIdLong(), event.getMessageIdLong()).queue(success -> {}, error -> {
 				if (!(error instanceof BotException)) {
 					LOG.error("Error deleting spoiler", error);
