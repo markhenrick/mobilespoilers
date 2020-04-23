@@ -35,14 +35,17 @@ public class BotInfoService {
 	}
 
 	public MessageEmbed getAboutEmbed() {
+		var jda = jdaFacade.getJda();
+		var client = jdaFacade.getCommandClient();
 		var embed = new EmbedBuilder();
 		embed.setTitle("Mobile Spoilers", ABOUT_LINK);
 		embed.appendDescription(DESCRIPTION);
 		embed.appendDescription("Click the title above for more info");
-		embed.addField("Servers", Integer.toString(jdaFacade.getCommandClient().getTotalGuilds()), true);
+		embed.addField("Servers", Integer.toString(client.getTotalGuilds()), true);
 		embed.addField("Active spoilers", Long.toString(repo.count()), true);
+		embed.addField("Latency", String.format("%s ms", jda.getGatewayPing()), true);
 		if (config.isShowAdminInfo()) {
-			var owner = jdaFacade.getJda().getUserById(jdaFacade.getCommandClient().getOwnerId());
+			var owner = jda.getUserById(client.getOwnerId());
 			var ownerName = owner != null ? owner.getAsTag() : null;
 			if (ownerName != null) {
 				embed.addField("Admin", ownerName, true);
