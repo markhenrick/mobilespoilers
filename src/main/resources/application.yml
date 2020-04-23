@@ -1,3 +1,7 @@
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 1 # This application is effectively single-threaded for business logic
 mobilespoilers:
   show-admin-info: true
   deletion-emoji: "🗑️"
