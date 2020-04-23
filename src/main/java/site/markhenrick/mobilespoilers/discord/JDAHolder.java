@@ -7,6 +7,7 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.examples.command.GuildlistCommand;
 import com.jagrosh.jdautilities.examples.command.PingCommand;
 import com.jagrosh.jdautilities.examples.command.ShutdownCommand;
+import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -30,7 +31,11 @@ public class JDAHolder {
 
 	private List<Object> eventListenerQueue;
 	private List<Command> commandQueue;
+
+	@Getter
 	private JDA jda;
+
+	@Getter
 	private CommandClient commandClient;
 
 	public JDAHolder(MobileSpoilersConfig config, HelpCommand helpCommand) {
@@ -39,14 +44,6 @@ public class JDAHolder {
 		this.eventListenerQueue = new ArrayList<>();
 		this.commandQueue = new ArrayList<>();
 		LOG.info("Initialised");
-	}
-
-	public JDA getJda() {
-		return jda;
-	}
-
-	public CommandClient getCommandClient() {
-		return commandClient;
 	}
 
 	public void addEventListener(Object listener) {
