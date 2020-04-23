@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import site.markhenrick.mobilespoilers.MobileSpoilersConfig;
+import site.markhenrick.mobilespoilers.dal.SpoilerRepository;
 import site.markhenrick.mobilespoilers.discord.JDAHolder;
 
 import static net.dv8tion.jda.api.Permission.*;
@@ -18,13 +19,15 @@ public class BotInfoService {
 		MESSAGE_ADD_REACTION, VIEW_CHANNEL, MESSAGE_WRITE, MESSAGE_MANAGE, MESSAGE_EMBED_LINKS, MESSAGE_ATTACH_FILES, MESSAGE_EXT_EMOJI);
 
 	private final MobileSpoilersConfig config;
+	private final SpoilerRepository repo;
 
 	@Autowired
 	@Lazy // Used to break a cycle. TODO revisit if this is the best solution
 	private JDAHolder jdaFacade;
 
-	public BotInfoService(MobileSpoilersConfig config) {
+	public BotInfoService(MobileSpoilersConfig config, SpoilerRepository repo) {
 		this.config = config;
+		this.repo = repo;
 	}
 
 	public String getInviteLink() {
@@ -38,6 +41,7 @@ public class BotInfoService {
 		embed.appendDescription(DESCRIPTION);
 		embed.appendDescription("Click the title above for more info");
 		embed.addField("Servers", Integer.toString(jdaFacade.getCommandClient().getTotalGuilds()), true);
+		embed.addField("Active spoilers", Long.toString(repo.count()), true);
 		if (config.isShowAdminInfo()) {
 			var owner = jdaFacade.getJda().getUserById(jdaFacade.getCommandClient().getOwnerId());
 			var ownerName = owner != null ? owner.getAsTag() : null;
