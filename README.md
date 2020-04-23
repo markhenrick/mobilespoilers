@@ -1,6 +1,6 @@
 # mobilespoilers
 
-[![Build Status](https://travis-ci.com/markhenrick/mobilespoilers.svg?branch=master)](https://travis-ci.com/markhenrick/mobilespoilers) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Java CI with Maven](https://github.com/markhenrick/mobilespoilers/workflows/Java%20CI%20with%20Maven/badge.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This bot is a temporary solution for a minor UI problem on [Discord](https://discordapp.com/) - there is no way to mark an image as a spoiler on mobile
 
