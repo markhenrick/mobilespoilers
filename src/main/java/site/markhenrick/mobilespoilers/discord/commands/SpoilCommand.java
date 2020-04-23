@@ -47,19 +47,20 @@ public class SpoilCommand extends SelfRegisteringCommand {
 		}
 
 		var barrier = new AsyncBarrier<DownloadResult, IOException>(attachments.size(), results -> {
+			LOG.trace("All attachments downloaded");
 			deleteMessage(event);
 			sendSpoilerMessage(event, results);
-		}, e -> {
-			LOG.error("Error downloading attachment", e);
-			reportError(event, "Something went wrong when downloading your attachment");
-		});
+		}, e -> reportError(event, "Something went wrong when downloading your attachment"));
+
 		for (var attachment : attachments) {
 			var request = new Request.Builder().url(attachment.getUrl()).build();
+			LOG.trace("Downloading attachment {}", request);
 
 			event.getJDA().getHttpClient().newCall(request).enqueue(new Callback() {
 				@Override
 				public void onResponse(Call call, Response response) throws IOException {
 					try (var body = response.body()) {
+						LOG.trace("Finished download {}", request);
 						assert body != null;
 						barrier.addResult(new DownloadResult(attachment.getFileName(), body.bytes()));
 					}
@@ -67,6 +68,7 @@ public class SpoilCommand extends SelfRegisteringCommand {
 
 				@Override
 				public void onFailure(Call call, IOException e) {
+					LOG.error("Error in download", e);
 					barrier.error(e);
 				}
 			});
@@ -79,8 +81,12 @@ public class SpoilCommand extends SelfRegisteringCommand {
 	}
 
 	private static void deleteMessage(CommandEvent event) {
-		if (!(event.getChannel() instanceof GuildChannel)) return;
 		var message = event.getMessage();
+		LOG.debug("Attempting to delete message {}", message.getId());
+		if (!(event.getChannel() instanceof GuildChannel)) {
+			LOG.debug("Not trying to delete message from a {}", event.getChannel().getClass());
+			return;
+		}
 		var channel = (GuildChannel) event.getChannel();
 		if (event.getSelfMember().hasPermission(channel, MESSAGE_MANAGE)) {
 			message.delete().queue(success -> {}, error -> {
