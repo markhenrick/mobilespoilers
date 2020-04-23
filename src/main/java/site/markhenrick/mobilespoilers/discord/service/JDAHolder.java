@@ -5,7 +5,6 @@ import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.examples.command.GuildlistCommand;
-import com.jagrosh.jdautilities.examples.command.PingCommand;
 import com.jagrosh.jdautilities.examples.command.ShutdownCommand;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
@@ -71,7 +70,7 @@ public class JDAHolder {
 			.setPrefix(config.getPrefix())
 			.setOwnerId(config.getAdminUserId())
 			.setHelpConsumer(helpCommand)
-			.addCommands(new GuildlistCommand(waiter), new PingCommand(), new ShutdownCommand())
+			.addCommands(new GuildlistCommand(waiter), new ShutdownCommand())
 			.addCommands(commandQueue.toArray(new Command[0]))
 			.build();
 

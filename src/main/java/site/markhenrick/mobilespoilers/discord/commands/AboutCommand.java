@@ -14,7 +14,7 @@ public class AboutCommand extends SelfRegisteringCommand {
 	public AboutCommand(BotInfoService botInfoService) {
 		this.botInfoService = botInfoService;
 		this.name = "about";
-		this.aliases = new String[] { "info", "invite" };
+		this.aliases = new String[] { "info", "invite", "ping" };
 		this.help = "show info about the bot and its admin, and get an invite link to add it to your server";
 		this.guildOnly = false;
 		this.hidden = true;
