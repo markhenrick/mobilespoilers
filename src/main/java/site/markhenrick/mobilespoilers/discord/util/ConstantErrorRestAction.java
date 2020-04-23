@@ -11,7 +11,7 @@ public class ConstantErrorRestAction<T> implements RestAction<T> {
 	private final JDA jda;
 	private final RuntimeException error;
 
-	ConstantErrorRestAction(JDA jda, RuntimeException error) {
+	public ConstantErrorRestAction(JDA jda, RuntimeException error) {
 		this.jda = jda;
 		this.error = error;
 	}

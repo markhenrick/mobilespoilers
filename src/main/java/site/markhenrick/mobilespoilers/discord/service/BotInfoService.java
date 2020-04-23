@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import site.markhenrick.mobilespoilers.MobileSpoilersConfig;
 import site.markhenrick.mobilespoilers.dal.SpoilerRepository;
-import site.markhenrick.mobilespoilers.discord.JDAHolder;
 
 import static net.dv8tion.jda.api.Permission.*;
 

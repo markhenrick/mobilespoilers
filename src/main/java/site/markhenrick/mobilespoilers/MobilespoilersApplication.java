@@ -4,7 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import site.markhenrick.mobilespoilers.discord.JDAHolder;
+import site.markhenrick.mobilespoilers.discord.service.JDAHolder;
 
 @SpringBootApplication
 public class MobilespoilersApplication {

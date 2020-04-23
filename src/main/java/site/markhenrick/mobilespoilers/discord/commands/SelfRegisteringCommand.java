@@ -2,7 +2,7 @@ package site.markhenrick.mobilespoilers.discord.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import org.springframework.beans.factory.annotation.Autowired;
-import site.markhenrick.mobilespoilers.discord.JDAHolder;
+import site.markhenrick.mobilespoilers.discord.service.JDAHolder;
 
 import javax.annotation.PostConstruct;
 

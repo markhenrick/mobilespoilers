@@ -1,4 +1,4 @@
-package site.markhenrick.mobilespoilers.discord.deletion;
+package site.markhenrick.mobilespoilers.discord.service;
 
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import site.markhenrick.mobilespoilers.dal.Spoiler;
 import site.markhenrick.mobilespoilers.dal.SpoilerRepository;
-import site.markhenrick.mobilespoilers.discord.JDAHolder;
-import site.markhenrick.mobilespoilers.discord.util.RestActionFactory;
 import site.markhenrick.mobilespoilers.util.Unit;
 
 import static site.markhenrick.mobilespoilers.util.Unit.UNIT;

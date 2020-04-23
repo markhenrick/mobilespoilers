@@ -11,7 +11,7 @@ public class ConstantRestAction<T> implements RestAction<T> {
 	private final JDA jda;
 	private final T result;
 
-	ConstantRestAction(JDA jda, T result) {
+	public ConstantRestAction(JDA jda, T result) {
 		this.jda = jda;
 		this.result = result;
 	}

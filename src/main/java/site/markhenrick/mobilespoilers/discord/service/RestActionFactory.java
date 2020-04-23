@@ -1,9 +1,10 @@
-package site.markhenrick.mobilespoilers.discord.util;
+package site.markhenrick.mobilespoilers.discord.service;
 
 import net.dv8tion.jda.api.requests.RestAction;
 import org.springframework.stereotype.Service;
-import site.markhenrick.mobilespoilers.discord.BotException;
-import site.markhenrick.mobilespoilers.discord.JDAHolder;
+import site.markhenrick.mobilespoilers.discord.util.BotException;
+import site.markhenrick.mobilespoilers.discord.util.ConstantErrorRestAction;
+import site.markhenrick.mobilespoilers.discord.util.ConstantRestAction;
 
 import java.util.Optional;
 

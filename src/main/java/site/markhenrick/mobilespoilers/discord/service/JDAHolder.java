@@ -1,4 +1,4 @@
-package site.markhenrick.mobilespoilers.discord;
+package site.markhenrick.mobilespoilers.discord.service;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;

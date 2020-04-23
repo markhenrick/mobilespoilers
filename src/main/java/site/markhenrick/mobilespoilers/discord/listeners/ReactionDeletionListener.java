@@ -5,8 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import site.markhenrick.mobilespoilers.MobileSpoilersConfig;
-import site.markhenrick.mobilespoilers.discord.BotException;
-import site.markhenrick.mobilespoilers.discord.deletion.Deleter;
+import site.markhenrick.mobilespoilers.discord.util.BotException;
+import site.markhenrick.mobilespoilers.discord.service.Deleter;
 
 @Service
 public class ReactionDeletionListener extends SelfRegisteringListener {
