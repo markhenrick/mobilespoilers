@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import site.markhenrick.mobilespoilers.MobileSpoilersConfig;
 import site.markhenrick.mobilespoilers.dal.SpoilerRepository;
+import site.markhenrick.mobilespoilers.services.StatisticsService;
 
 import static net.dv8tion.jda.api.Permission.*;
 
@@ -23,14 +24,16 @@ public class BotInfoService {
 
 	private final MobileSpoilersConfig config;
 	private final SpoilerRepository repo;
+	private final StatisticsService stats;
 
 	@Autowired
 	@Lazy // Used to break a cycle. TODO revisit if this is the best solution
 	private JDAHolder jdaHolder;
 
-	public BotInfoService(MobileSpoilersConfig config, SpoilerRepository repo) {
+	public BotInfoService(MobileSpoilersConfig config, SpoilerRepository repo, StatisticsService stats) {
 		this.config = config;
 		this.repo = repo;
+		this.stats = stats;
 	}
 
 	public String getInviteLink() {
@@ -58,6 +61,8 @@ public class BotInfoService {
 			}
 		}
 		embed.addField("Invite link", String.format("[`Click here`](%s)", getInviteLink()), true);
-		return embed.build();
+		var result = embed.build();
+		stats.recordInfoProvided();
+		return result;
 	}
 }

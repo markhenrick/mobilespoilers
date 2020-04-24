@@ -14,9 +14,11 @@ import org.springframework.stereotype.Service;
 import site.markhenrick.mobilespoilers.MobileSpoilersConfig;
 import site.markhenrick.mobilespoilers.dal.Spoiler;
 import site.markhenrick.mobilespoilers.dal.SpoilerRepository;
+import site.markhenrick.mobilespoilers.services.StatisticsService;
 import site.markhenrick.mobilespoilers.util.AsyncBarrier;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import static net.dv8tion.jda.api.Permission.MESSAGE_MANAGE;
 
@@ -26,14 +28,16 @@ public class SpoilCommand extends SelfRegisteringCommand {
 
 	private final MobileSpoilersConfig config;
 	private final SpoilerRepository repo;
+	private final StatisticsService stats;
 
-	public SpoilCommand(MobileSpoilersConfig config, SpoilerRepository repo) {
+	public SpoilCommand(MobileSpoilersConfig config, SpoilerRepository repo, StatisticsService stats) {
 		this.name = "spoil";
 		this.aliases = new String[] { "spoiler" };
 		this.arguments = "[optional message - will *not* be hidden]";
 		this.guildOnly = false;
 		this.config = config;
 		this.repo = repo;
+		this.stats = stats;
 	}
 
 	@Override
@@ -62,7 +66,9 @@ public class SpoilCommand extends SelfRegisteringCommand {
 					try (var body = response.body()) {
 						LOG.trace("Finished download {}", request);
 						assert body != null;
-						barrier.addResult(new DownloadResult(attachment.getFileName(), body.bytes()));
+						var bytes = body.bytes();
+						barrier.addResult(new DownloadResult(attachment.getFileName(), bytes));
+						stats.recordXfer(bytes.length / 1024);
 					}
 				}
 
@@ -98,7 +104,7 @@ public class SpoilCommand extends SelfRegisteringCommand {
 		}
 	}
 
-	private void sendSpoilerMessage(CommandEvent event, Iterable<? extends DownloadResult> results) {
+	private void sendSpoilerMessage(CommandEvent event, Collection<? extends DownloadResult> results) {
 		var args = event.getArgs();
 		var channel = event.getChannel();
 		var author = event.getAuthor();
@@ -117,6 +123,7 @@ public class SpoilCommand extends SelfRegisteringCommand {
 			spoiler.setUserId(author.getIdLong());
 			LOG.debug("Recording spoiler {}", spoiler);
 			repo.save(spoiler);
+			stats.recordSpoiler(results.size());
 		});
 	}
 
