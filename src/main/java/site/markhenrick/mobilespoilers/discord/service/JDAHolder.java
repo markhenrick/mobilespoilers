@@ -18,8 +18,11 @@ import site.markhenrick.mobilespoilers.discord.commands.HelpCommand;
 
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+
+import static net.dv8tion.jda.api.utils.cache.CacheFlag.*;
 
 @Service
 public class JDAHolder {
@@ -77,6 +80,7 @@ public class JDAHolder {
 			.build();
 
 		this.jda = new JDABuilder(config.getToken())
+			.setDisabledCacheFlags(EnumSet.of(EMOTE, VOICE_STATE, ACTIVITY, CLIENT_STATUS))
 			.addEventListeners(commandClient)
 			.addEventListeners(eventListenerQueue.toArray())
 			.build();
