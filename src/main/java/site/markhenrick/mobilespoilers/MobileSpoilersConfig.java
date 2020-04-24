@@ -36,6 +36,10 @@ public class MobileSpoilersConfig {
 	@Setter
 	private boolean showAdminInfo;
 
+	@Getter
+	@Setter
+	private boolean statistics;
+
 	@PostConstruct
 	public void postConstruct() {
 		LOG.info("Loaded config {}", this);
