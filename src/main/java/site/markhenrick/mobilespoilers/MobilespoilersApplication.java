@@ -4,7 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import site.markhenrick.mobilespoilers.discord.service.JDAHolder;
+import site.markhenrick.mobilespoilers.discord.services.JDAHolder;
 
 @SpringBootApplication
 public class MobilespoilersApplication {
@@ -14,15 +14,15 @@ public class MobilespoilersApplication {
 		SpringApplication.run(MobilespoilersApplication.class, args);
 	}
 
-	public MobilespoilersApplication(JDAHolder jdaFacade) {
-		this.jdaFacade = jdaFacade;
+	public MobilespoilersApplication(JDAHolder jdaHolder) {
+		this.jdaHolder = jdaHolder;
 	}
 
-	private final JDAHolder jdaFacade;
+	private final JDAHolder jdaHolder;
 
 	@Bean
 	public CommandLineRunner commandLineRunner() {
-		return args -> jdaFacade.start();
+		return args -> jdaHolder.start();
 	}
 
 }

@@ -6,18 +6,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import site.markhenrick.mobilespoilers.MobileSpoilersConfig;
 import site.markhenrick.mobilespoilers.discord.util.BotException;
-import site.markhenrick.mobilespoilers.discord.service.Deleter;
+import site.markhenrick.mobilespoilers.discord.services.DeletionService;
 
 @Service
 public class ReactionDeletionListener extends SelfRegisteringListener {
 	private static final Logger LOG = LoggerFactory.getLogger(ReactionDeletionListener.class);
 
 	private final MobileSpoilersConfig config;
-	private final Deleter deleter;
+	private final DeletionService deletionService;
 
-	public ReactionDeletionListener(MobileSpoilersConfig config, Deleter deleter) {
+	public ReactionDeletionListener(MobileSpoilersConfig config, DeletionService deletionService) {
 		this.config = config;
-		this.deleter = deleter;
+		this.deletionService = deletionService;
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class ReactionDeletionListener extends SelfRegisteringListener {
 		if (!author.isBot() && emote.isEmoji() && emote.getEmoji().contains(config.getDeletionEmoji())) {
 			LOG.trace("TryDeleting message due to reaction on message {} from {} in {} of {}",
 				event.getMessageId(), event.getUser(), event.getChannel(), event.getGuild());
-			deleter.tryDeleteMessage(author.getIdLong(), event.getMessageIdLong()).queue(success -> {}, error -> {
+			deletionService.tryDeleteMessage(author.getIdLong(), event.getMessageIdLong()).queue(success -> {}, error -> {
 				if (!(error instanceof BotException)) {
 					LOG.error("Error deleting spoiler", error);
 				}

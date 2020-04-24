@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.events.guild.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import site.markhenrick.mobilespoilers.discord.service.BotInfoService;
+import site.markhenrick.mobilespoilers.discord.services.BotInfoService;
 
 @Service
 public class MetaListener extends SelfRegisteringListener {

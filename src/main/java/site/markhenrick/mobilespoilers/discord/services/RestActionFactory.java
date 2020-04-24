@@ -1,4 +1,4 @@
-package site.markhenrick.mobilespoilers.discord.service;
+package site.markhenrick.mobilespoilers.discord.services;
 
 import net.dv8tion.jda.api.requests.RestAction;
 import org.springframework.stereotype.Service;

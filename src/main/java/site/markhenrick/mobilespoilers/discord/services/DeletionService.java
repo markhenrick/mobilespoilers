@@ -1,4 +1,4 @@
-package site.markhenrick.mobilespoilers.discord.service;
+package site.markhenrick.mobilespoilers.discord.services;
 
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -12,15 +12,15 @@ import site.markhenrick.mobilespoilers.util.Unit;
 import static site.markhenrick.mobilespoilers.util.Unit.UNIT;
 
 @Service
-public class Deleter {
-	private static final Logger LOG = LoggerFactory.getLogger(Deleter.class);
+public class DeletionService {
+	private static final Logger LOG = LoggerFactory.getLogger(DeletionService.class);
 
-	private final JDAHolder jdaFacade;
+	private final JDAHolder jdaHolder;
 	private final RestActionFactory restActionFactory;
 	private final SpoilerRepository repo;
 
-	public Deleter(JDAHolder jdaFacade, RestActionFactory restActionFactory, SpoilerRepository repo) {
-		this.jdaFacade = jdaFacade;
+	public DeletionService(JDAHolder jdaHolder, RestActionFactory restActionFactory, SpoilerRepository repo) {
+		this.jdaHolder = jdaHolder;
 		this.restActionFactory = restActionFactory;
 		this.repo = repo;
 	}
@@ -46,7 +46,7 @@ public class Deleter {
 	}
 
 	private RestAction<MessageChannel> getChannel(long id) {
-		return restActionFactory.fromOptional(jdaFacade.getMessageChannelById(id),
+		return restActionFactory.fromOptional(jdaHolder.getMessageChannelById(id),
 			"Sorry, I no longer have access to the channel so cannot delete the spoiler");
 	}
 }

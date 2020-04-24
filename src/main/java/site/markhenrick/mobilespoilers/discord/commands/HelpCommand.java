@@ -4,7 +4,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.MessageBuilder;
 import org.springframework.stereotype.Service;
-import site.markhenrick.mobilespoilers.discord.service.BotInfoService;
+import site.markhenrick.mobilespoilers.discord.services.BotInfoService;
 
 import java.util.function.Consumer;
 

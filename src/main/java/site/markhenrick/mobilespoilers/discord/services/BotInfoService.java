@@ -1,4 +1,4 @@
-package site.markhenrick.mobilespoilers.discord.service;
+package site.markhenrick.mobilespoilers.discord.services;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -26,7 +26,7 @@ public class BotInfoService {
 
 	@Autowired
 	@Lazy // Used to break a cycle. TODO revisit if this is the best solution
-	private JDAHolder jdaFacade;
+	private JDAHolder jdaHolder;
 
 	public BotInfoService(MobileSpoilersConfig config, SpoilerRepository repo) {
 		this.config = config;
@@ -35,12 +35,12 @@ public class BotInfoService {
 
 	public String getInviteLink() {
 		return String.format("https://discordapp.com/oauth2/authorize?client_id=%s&scope=bot&permissions=%s",
-			jdaFacade.getJda().getSelfUser().getId(), INVITE_BITFIELD);
+			jdaHolder.getJda().getSelfUser().getId(), INVITE_BITFIELD);
 	}
 
 	public MessageEmbed getAboutEmbed() {
-		var jda = jdaFacade.getJda();
-		var client = jdaFacade.getCommandClient();
+		var jda = jdaHolder.getJda();
+		var client = jdaHolder.getCommandClient();
 		var embed = new EmbedBuilder();
 		embed.setTitle("Mobile Spoilers", ABOUT_LINK);
 		embed.appendDescription(DESCRIPTION);

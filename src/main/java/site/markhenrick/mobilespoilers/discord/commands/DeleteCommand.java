@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import site.markhenrick.mobilespoilers.MobileSpoilersConfig;
 import site.markhenrick.mobilespoilers.discord.util.BotException;
-import site.markhenrick.mobilespoilers.discord.service.Deleter;
-import site.markhenrick.mobilespoilers.discord.service.RestActionFactory;
+import site.markhenrick.mobilespoilers.discord.services.DeletionService;
+import site.markhenrick.mobilespoilers.discord.services.RestActionFactory;
 
 @Service
 public class DeleteCommand extends SelfRegisteringCommand {
@@ -16,15 +16,15 @@ public class DeleteCommand extends SelfRegisteringCommand {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DeleteCommand.class);
 
-	private final Deleter deleter;
+	private final DeletionService deletionService;
 	private final RestActionFactory restActionFactory;
 
-	public DeleteCommand(MobileSpoilersConfig config, Deleter deleter, RestActionFactory restActionFactory) {
+	public DeleteCommand(MobileSpoilersConfig config, DeletionService deletionService, RestActionFactory restActionFactory) {
 		this.name = "delete";
 		this.help = String.format("Delete your spoiler by ID (you can also just react to it with %s)", config.getDeletionEmoji());
 		this.arguments = "<spoiler message ID>";
 		this.guildOnly = false;
-		this.deleter = deleter;
+		this.deletionService = deletionService;
 		this.restActionFactory = restActionFactory;
 	}
 
@@ -32,7 +32,7 @@ public class DeleteCommand extends SelfRegisteringCommand {
 	protected void execute(CommandEvent event) {
 		assertArgumentLength(event)
 			.flatMap(this::parseLong)
-			.flatMap(messageId -> deleter.tryDeleteMessage(event.getAuthor().getIdLong(), messageId))
+			.flatMap(messageId -> deletionService.tryDeleteMessage(event.getAuthor().getIdLong(), messageId))
 			.queue(result -> {}, error -> {
 				if (error instanceof BotException) {
 					event.reply(error.getMessage());

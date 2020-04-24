@@ -3,7 +3,7 @@ package site.markhenrick.mobilespoilers.discord.commands;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.Permission;
 import org.springframework.stereotype.Service;
-import site.markhenrick.mobilespoilers.discord.service.BotInfoService;
+import site.markhenrick.mobilespoilers.discord.services.BotInfoService;
 
 import static net.dv8tion.jda.api.Permission.MESSAGE_EMBED_LINKS;
 
