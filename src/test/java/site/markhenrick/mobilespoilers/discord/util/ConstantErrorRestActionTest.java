@@ -22,7 +22,7 @@ class ConstantErrorRestActionTest {
 	@Nested
 	class Queue {
 		@Test
-		void usesCallback() {
+		void shouldUseCallback() {
 			var callbackExecuted = new AtomicBoolean(false);
 			restAction.queue(success -> fail(), e -> callbackExecuted.set(true));
 			//noinspection ConstantConditions
@@ -30,13 +30,13 @@ class ConstantErrorRestActionTest {
 		}
 
 		@Test
-		void suppliesCorrectValue() {
+		void shouldSupplyError() {
 			restAction.queue(success -> {}, e -> assertThat(e).isEqualTo(EXPECTED_EXCEPTION));
 		}
 
 		@SuppressWarnings("JUnitTestMethodWithNoAssertions")
 		@Test
-		void allowsNullCallback() {
+		void shouldAllowNullCallback() {
 			restAction.queue(null, null);
 		}
 	}
@@ -44,25 +44,17 @@ class ConstantErrorRestActionTest {
 	@Nested
 	class Complete {
 		@Test
-		void throwsException() {
+		void shouldThrowException() {
 			assertThrows(RuntimeException.class, () -> restAction.complete(true));
-			assertThrows(RuntimeException.class, () -> restAction.complete(false));
-		}
-
-		@Test
-		void throwsRightException() {
-			try {
-				restAction.complete(true);
-			} catch (RuntimeException e) {
-				assertThat(e).isEqualTo(EXPECTED_EXCEPTION);
-			}
+			var e = assertThrows(RuntimeException.class, () -> restAction.complete(false));
+			assertThat(e).isEqualTo(EXPECTED_EXCEPTION);
 		}
 	}
 
 	@Nested
 	class Submit {
 		@Test
-		void failsFuture() throws Exception {
+		void shouldFailFuture() throws Exception {
 			var callbackExecuted = new AtomicBoolean(false);
 			var future = restAction.submit(true).exceptionally(e -> {
 				callbackExecuted.set(true);

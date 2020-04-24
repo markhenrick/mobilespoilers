@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class AsyncBarrierTest {
 	@Test
-	void runsCallback() {
+	void shouldRunsCallback() {
 		var callbackRan = new AtomicBoolean(false);
 		var barrier = new AsyncBarrier<Integer, Void>(1, unused -> callbackRan.set(true), e -> fail());
 		barrier.addResult(1);
@@ -22,20 +22,20 @@ class AsyncBarrierTest {
 	}
 
 	@Test
-	void suppliesResult() {
+	void shouldSupplyResult() {
 		var barrier = new AsyncBarrier<Integer, Void>(2, results -> assertThat(results).isEqualTo(List.of(1, 2)), e -> fail());
 		barrier.addResult(1);
 		barrier.addResult(2);
 	}
 
 	@Test
-	void validatesLimit() {
+	void shouldValidateLimit() {
 		//noinspection ResultOfObjectAllocationIgnored
 		assertThrows(IllegalArgumentException.class, () -> new AsyncBarrier<Void, Void>(-1, unused -> fail(), e -> fail()));
 	}
 
 	@Test
-	void runsCallbackImmediatelyIfLimitIsZero() {
+	void shouldRunCallbackImmediatelyIfLimitIsZero() {
 		var callbackRan = new AtomicBoolean(false);
 		//noinspection ResultOfObjectAllocationIgnored
 		new AsyncBarrier<Void, Void>(0, results -> {
@@ -47,7 +47,7 @@ class AsyncBarrierTest {
 	}
 
 	@Test
-	void runsErrorCallback() {
+	void shouldRunErrorCallback() {
 		var callbackRan = new AtomicBoolean(false);
 		var barrier = new AsyncBarrier<Void, Integer>(1, unused -> fail(), e -> callbackRan.set(true));
 		barrier.error(1);
@@ -56,13 +56,13 @@ class AsyncBarrierTest {
 	}
 
 	@Test
-	void suppliesError() {
+	void shouldSupplyError() {
 		var barrier = new AsyncBarrier<Integer, Integer>(1, unused -> fail(), e -> assertThat(e).isEqualTo(1));
 		barrier.error(1);
 	}
 
 	@Test
-	void ignoresSubsequentErrors() {
+	void shouldIgnoreSubsequentErrors() {
 		var timesCallbackRan = new AtomicInteger(0);
 		var barrier = new AsyncBarrier<Void, Integer>(1, unused -> fail(), e -> timesCallbackRan.incrementAndGet());
 		barrier.error(1);
@@ -71,14 +71,14 @@ class AsyncBarrierTest {
 	}
 
 	@Test
-	void doesNotRunSuccessCallbackAfterError() {
+	void shouldNotRunSuccessCallbackAfterError() {
 		var barrier = new AsyncBarrier<Integer, Integer>(1, unused -> fail(), e -> {});
 		barrier.error(1);
 		barrier.addResult(1);
 	}
 
 	@Test
-	void throwsExceptionOnOverflow() {
+	void shouldThrowExceptionOnOverflow() {
 		var barrier = new AsyncBarrier<Integer, Void>(2, unused -> {}, e -> fail());
 		barrier.addResult(1);
 		barrier.addResult(2);
@@ -86,7 +86,7 @@ class AsyncBarrierTest {
 	}
 
 	@Test
-	void throwsExceptionOnErrorWhenFull() {
+	void shouldThrowExceptionOnErrorWhenFull() {
 		var barrier = new AsyncBarrier<Integer, Integer>(1, unused -> {}, e -> fail());
 		barrier.addResult(1);
 		assertThrows(IllegalStateException.class, () -> barrier.error(1));

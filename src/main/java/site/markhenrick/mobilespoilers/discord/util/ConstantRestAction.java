@@ -1,13 +1,14 @@
 package site.markhenrick.mobilespoilers.discord.util;
 
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public class ConstantRestAction<T> implements RestAction<T> {
+public class ConstantRestAction<T> implements AuditableRestAction<T> {
 	private final JDA jda;
 	private final T result;
 
@@ -22,7 +23,7 @@ public class ConstantRestAction<T> implements RestAction<T> {
 	}
 
 	@Override
-	public RestAction<T> setCheck(BooleanSupplier checks) {
+	public AuditableRestAction<T> setCheck(BooleanSupplier checks) {
 		return this;
 	}
 
@@ -41,5 +42,20 @@ public class ConstantRestAction<T> implements RestAction<T> {
 		var future = new CompletableFuture<T>();
 		future.complete(result);
 		return future;
+	}
+
+	@Override
+	public AuditableRestAction<T> reason(String reason) {
+		return this;
+	}
+
+	@Override
+	public AuditableRestAction<T> timeout(long timeout, TimeUnit unit) {
+		return this;
+	}
+
+	@Override
+	public AuditableRestAction<T> deadline(long timestamp) {
+		return this;
 	}
 }
