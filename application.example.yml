@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://host/database
-    username: user
-    password: password
+    url: jdbc:postgresql://localhost/mobilespoilers
+    username: mobilespoilers
+    password: mobilespoilers
 mobilespoilers:
   admin-user-id: 12345
   token: abcdef
