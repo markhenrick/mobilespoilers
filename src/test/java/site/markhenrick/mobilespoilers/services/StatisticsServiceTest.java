@@ -12,19 +12,19 @@ class StatisticsServiceTest {
 
 	@Nested
 	class PrettyPrintSizes {
-		@ParameterizedTest(name = "{0}kb = {1}")
+		@ParameterizedTest(name = "{0}KiB = {1}")
 		@CsvSource({
-			"0, 0kb",
-			"1, 1kb",
-			"1023, 1023kb",
-			"1024, 1mb",
-			"1025, 1mb",
-			"2048, 2mb",
-			"2049, 2mb",
-			"1024000, 1000mb",
-			"1048576, 1gb",
-			"1073741824, 1tb",
-			"9223372036854775807, 8zb"
+			"0, 0KiB",
+			"1, 1KiB",
+			"1023, 1023KiB",
+			"1024, 1MiB",
+			"1025, 1MiB",
+			"2048, 2MiB",
+			"2049, 2MiB",
+			"1024000, 1000MiB",
+			"1048576, 1GiB",
+			"1073741824, 1TiB",
+			"9223372036854775807, 8ZiB"
 		})
 		void shouldPrettyPrintSizes(String inputString, String expected) {
 			var input = Long.parseLong(inputString);

@@ -120,11 +120,11 @@ public class StatisticsService {
 
 	static String prettyPrintSize(long kiloByteCount) {
 		if (kiloByteCount < 0) throw new IllegalArgumentException("kiloByteCount must be positive");
-		if (kiloByteCount == 0) return "0kb";
+		if (kiloByteCount == 0) return "0KiB";
 		final var order = (int) (Math.log(kiloByteCount) / Math.log(1024));
-		@SuppressWarnings("SpellCheckingInspection") final var orderName = "kmgtpez".charAt(order);
+		@SuppressWarnings("SpellCheckingInspection") final var orderName = "KMGTPEZ".charAt(order);
 		final var mantissa = (int) (kiloByteCount / Math.pow(1024, order));
-		return String.format("%s%sb", mantissa, orderName);
+		return String.format("%s%siB", mantissa, orderName);
 	}
 
 	enum Column {
