@@ -6,9 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import site.markhenrick.mobilespoilers.MobileSpoilersConfig;
 
-import java.util.Arrays;
+import java.util.regex.Pattern;
 
-@SuppressWarnings("SqlWithoutWhere")
 @Service
 public class StatisticsService {
 	private static final Logger LOG = LoggerFactory.getLogger(StatisticsService.class);
@@ -26,46 +25,123 @@ public class StatisticsService {
 		}
 	}
 
+	public boolean isEnabled() {
+		return config.isStatistics();
+	}
+
 	public void recordStartup() {
-		doUpdate("startups = startups + 1");
+		doIncrement(Column.STARTUPS);
+	}
+
+	public long getStartups() {
+		return getStat(Column.STARTUPS);
 	}
 
 	public void recordSpoiler(int files) {
-		assert files > 0;
-		doUpdate("spoiler_messages = spoiler_messages + 1, spoiler_files = spoiler_files + ?", files);
+		if (files <= 0) throw new IllegalArgumentException("files must be strictly positive");
+		doIncrement(Column.SPOILER_MESSAGES);
+		doIncrement(Column.SPOILER_FILES, files);
 	}
 
-	public void recordXfer(int kb) {
-		assert kb >= 0;
-		doUpdate("xfer_kb = xfer_kb + ?", kb);
+	public long getSpoilerMessages() {
+		return getStat(Column.SPOILER_MESSAGES);
+	}
+
+	public long getSpoilerFiles() {
+		return getStat(Column.SPOILER_FILES);
+	}
+
+	public void recordXfer(int byteCount) {
+		if (byteCount < 0) throw new IllegalArgumentException("byteCount must be positive");
+		doIncrement(Column.XFER_KB, byteCount / 1024);
+	}
+
+	public String getSpoilerXfer() {
+		return prettyPrintSize(getStat(Column.SPOILER_MESSAGES));
 	}
 
 	public void recordInfoProvided() {
-		doUpdate("info_provided = info_provided + 1");
+		doIncrement(Column.INFO_PROVIDED);
+	}
+
+	public long getInfosProvided() {
+		return getStat(Column.INFO_PROVIDED);
 	}
 
 	public void recordMessageSeen() {
-		doUpdate("messages_seen = messages_seen + 1");
+		doIncrement(Column.MESSAGES_SEEN);
+	}
+
+	public long getMessagesSeen() {
+		return getStat(Column.MESSAGES_SEEN);
 	}
 
 	public void recordReactionSeen() {
-		doUpdate("reactions_seen = reactions_seen + 1");
+		doIncrement(Column.REACTIONS_SEEN);
+	}
+
+	public long getReactionsSeen() {
+		return getStat(Column.REACTIONS_SEEN);
 	}
 
 	public void recordGuildJoin() {
-		doUpdate("guild_joins = guild_joins + 1");
+		doIncrement(Column.GUILD_JOINS);
+	}
+
+	public long getGuildJoins() {
+		return getStat(Column.GUILD_JOINS);
 	}
 
 	public void recordGuildLeave() {
-		doUpdate("guild_leave = guild_leave + 1");
+		doIncrement(Column.GUILD_LEAVES);
 	}
 
-	private void doUpdate(String sqlFragment, Object... args) {
-		if (config.isStatistics()) {
-			var sql = "update statistic set " + sqlFragment;
-			LOG.trace("Executing {} {}", sql, Arrays.toString(args));
-			var modifiedRows = jdbcTemplate.update(sql, args);
+	public long getGuildLeaves() {
+		return getStat(Column.GUILD_LEAVES);
+	}
+
+	private void doIncrement(Column column) {
+		doIncrement(column, 1);
+	}
+
+	private void doIncrement(Column column, int increase) {
+		if (isEnabled()) {
+			var sql = "update statistic set " + column + " = " + column + " + ?";
+			LOG.trace("Executing {} {}", sql, increase);
+			var modifiedRows = jdbcTemplate.update(sql, increase);
 			assert modifiedRows == 1;
+		}
+	}
+
+	private Long getStat(Column column) {
+		if (!isEnabled()) throw new IllegalStateException("Statistics disabled");
+		return jdbcTemplate.queryForObject("select " + column + " from statistic", Long.class);
+	}
+
+	static String prettyPrintSize(long kiloByteCount) {
+		if (kiloByteCount < 0) throw new IllegalArgumentException("kiloByteCount must be positive");
+		if (kiloByteCount == 0) return "0kb";
+		final var order = (int) (Math.log(kiloByteCount) / Math.log(1024));
+		@SuppressWarnings("SpellCheckingInspection") final var orderName = "kmgtpez".charAt(order);
+		final var mantissa = (int) (kiloByteCount / Math.pow(1024, order));
+		return String.format("%s%sb", mantissa, orderName);
+	}
+
+	enum Column {
+		STARTUPS, SPOILER_MESSAGES, SPOILER_FILES, XFER_KB, INFO_PROVIDED, MESSAGES_SEEN, REACTIONS_SEEN, GUILD_JOINS, GUILD_LEAVES;
+
+		private static final Pattern SAFE_CHARS = Pattern.compile("^[a-zA-Z_]+$");
+
+		// This is NOT rigorous protection against SQL injection, just a basic sanity check
+		static boolean isSafeColumnName(CharSequence name) {
+			return SAFE_CHARS.matcher(name).matches();
+		}
+
+		@Override
+		public String toString() {
+			var name = super.name();
+			assert isSafeColumnName(name);
+			return name;
 		}
 	}
 }

@@ -68,7 +68,7 @@ public class SpoilCommand extends SelfRegisteringCommand {
 						assert body != null;
 						var bytes = body.bytes();
 						barrier.addResult(new DownloadResult(attachment.getFileName(), bytes));
-						stats.recordXfer(bytes.length / 1024);
+						stats.recordXfer(bytes.length);
 					}
 				}
 
