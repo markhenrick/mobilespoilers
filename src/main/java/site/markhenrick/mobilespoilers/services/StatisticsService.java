@@ -6,10 +6,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import site.markhenrick.mobilespoilers.MobileSpoilersConfig;
 
-import java.util.regex.Pattern;
-
+@SuppressWarnings("OverlyBroadCatchBlock")
 @Service
 public class StatisticsService {
+	// Contract: since this is a non-essential service, non-constructor public methods should never throw exceptions
+	// as far as reasonably possible. Instead just LOG.error, no-op, and return null
+
 	private static final Logger LOG = LoggerFactory.getLogger(StatisticsService.class);
 
 	private final MobileSpoilersConfig config;
@@ -18,6 +20,7 @@ public class StatisticsService {
 	public StatisticsService(MobileSpoilersConfig config, JdbcTemplate jdbcTemplate) {
 		this.config = config;
 		this.jdbcTemplate = jdbcTemplate;
+		ensureRow();
 		if (config.isStatistics()) {
 			LOG.info("Statistics enabled");
 		} else {
@@ -30,118 +33,138 @@ public class StatisticsService {
 	}
 
 	public void recordStartup() {
-		doIncrement(Column.STARTUPS);
+		doIncrement(LongCompatibleColumn.STARTUPS);
 	}
 
-	public long getStartups() {
-		return getStat(Column.STARTUPS);
+	public Long getStartups() {
+		return getStat(LongCompatibleColumn.STARTUPS);
 	}
 
 	public void recordSpoiler(int files) {
-		if (files <= 0) throw new IllegalArgumentException("files must be strictly positive");
-		doIncrement(Column.SPOILER_MESSAGES);
-		doIncrement(Column.SPOILER_FILES, files);
+		if (files > 0) {
+			doIncrement(LongCompatibleColumn.SPOILER_MESSAGES);
+			doIncrement(LongCompatibleColumn.SPOILER_FILES, files);
+		} else {
+			LOG.error("Illegal argument for recordSpoiler: files={}", files);
+		}
 	}
 
-	public long getSpoilerMessages() {
-		return getStat(Column.SPOILER_MESSAGES);
+	public Long getSpoilerMessages() {
+		return getStat(LongCompatibleColumn.SPOILER_MESSAGES);
 	}
 
-	public long getSpoilerFiles() {
-		return getStat(Column.SPOILER_FILES);
+	public Long getSpoilerFiles() {
+		return getStat(LongCompatibleColumn.SPOILER_FILES);
 	}
 
 	public void recordXfer(int byteCount) {
-		if (byteCount < 0) throw new IllegalArgumentException("byteCount must be positive");
-		doIncrement(Column.XFER_KB, byteCount / 1024);
+		if (byteCount >= 0) {
+			doIncrement(LongCompatibleColumn.XFER_KB, byteCount / 1024);
+		} else {
+			LOG.error("Illegal argument for recordXfer: byteCount={}", byteCount);
+		}
 	}
 
 	public String getSpoilerXfer() {
-		return prettyPrintSize(getStat(Column.SPOILER_MESSAGES));
+		return prettyPrintSize(getStat(LongCompatibleColumn.SPOILER_MESSAGES));
 	}
 
 	public void recordInfoProvided() {
-		doIncrement(Column.INFO_PROVIDED);
+		doIncrement(LongCompatibleColumn.INFO_PROVIDED);
 	}
 
-	public long getInfosProvided() {
-		return getStat(Column.INFO_PROVIDED);
+	public Long getInfosProvided() {
+		return getStat(LongCompatibleColumn.INFO_PROVIDED);
 	}
 
 	public void recordMessageSeen() {
-		doIncrement(Column.MESSAGES_SEEN);
+		doIncrement(LongCompatibleColumn.MESSAGES_SEEN);
 	}
 
-	public long getMessagesSeen() {
-		return getStat(Column.MESSAGES_SEEN);
+	public Long getMessagesSeen() {
+		return getStat(LongCompatibleColumn.MESSAGES_SEEN);
 	}
 
 	public void recordReactionSeen() {
-		doIncrement(Column.REACTIONS_SEEN);
+		doIncrement(LongCompatibleColumn.REACTIONS_SEEN);
 	}
 
-	public long getReactionsSeen() {
-		return getStat(Column.REACTIONS_SEEN);
+	public Long getReactionsSeen() {
+		return getStat(LongCompatibleColumn.REACTIONS_SEEN);
 	}
 
 	public void recordGuildJoin() {
-		doIncrement(Column.GUILD_JOINS);
+		doIncrement(LongCompatibleColumn.GUILD_JOINS);
 	}
 
-	public long getGuildJoins() {
-		return getStat(Column.GUILD_JOINS);
+	public Long getGuildJoins() {
+		return getStat(LongCompatibleColumn.GUILD_JOINS);
 	}
 
 	public void recordGuildLeave() {
-		doIncrement(Column.GUILD_LEAVES);
+		doIncrement(LongCompatibleColumn.GUILD_LEAVES);
 	}
 
-	public long getGuildLeaves() {
-		return getStat(Column.GUILD_LEAVES);
+	public Long getGuildLeaves() {
+		return getStat(LongCompatibleColumn.GUILD_LEAVES);
 	}
 
-	private void doIncrement(Column column) {
+	private void ensureRow() {
+		if (isEnabled()) {
+			jdbcTemplate.execute("insert into statistic default values on conflict do nothing");
+		}
+	}
+
+	private void doIncrement(LongCompatibleColumn column) {
 		doIncrement(column, 1);
 	}
 
-	private void doIncrement(Column column, int increase) {
-		if (isEnabled()) {
-			var sql = "update statistic set " + column + " = " + column + " + ?";
-			LOG.trace("Executing {} {}", sql, increase);
-			var modifiedRows = jdbcTemplate.update(sql, increase);
-			assert modifiedRows == 1;
+	private void doIncrement(LongCompatibleColumn column, int increase) {
+		try {
+			if (isEnabled()) {
+				var sql = "update statistic set " + column.name() + " = " + column.name() + " + ?";
+				LOG.trace("Updating \"{}\" arg={}", sql, increase);
+				var modifiedRows = jdbcTemplate.update(sql, increase);
+				assert modifiedRows == 1;
+			}
+		} catch (Exception e) {
+			LOG.error("Exception whilst updating", e);
 		}
 	}
 
-	private Long getStat(Column column) {
-		if (!isEnabled()) throw new IllegalStateException("Statistics disabled");
-		return jdbcTemplate.queryForObject("select " + column + " from statistic", Long.class);
+	private Long getStat(LongCompatibleColumn column) {
+		try {
+			if (isEnabled()) {
+				var sql = "select " + column + " from statistic";
+				LOG.trace("Querying \"{}\"", sql);
+				var value = jdbcTemplate.queryForObject("select " + column.name() + " from statistic", Long.class);
+				if (value == null) LOG.error("Value returned for {} was null", column);
+				return value;
+			} else {
+				LOG.error("Attempt to read column {} when stats are disabled", column);
+				return null;
+			}
+		} catch (Exception e) {
+			LOG.error("Exception whilst querying", e);
+			return null;
+		}
 	}
 
-	static String prettyPrintSize(long kiloByteCount) {
-		if (kiloByteCount < 0) throw new IllegalArgumentException("kiloByteCount must be positive");
-		if (kiloByteCount == 0) return "0KiB";
-		final var order = (int) (Math.log(kiloByteCount) / Math.log(1024));
-		@SuppressWarnings("SpellCheckingInspection") final var orderName = "KMGTPEZ".charAt(order);
-		final var mantissa = (int) (kiloByteCount / Math.pow(1024, order));
-		return String.format("%s%siB", mantissa, orderName);
+	static String prettyPrintSize(Long kiloByteCount) {
+		try {
+			if (kiloByteCount < 0) throw new IllegalArgumentException("kiloByteCount must be positive");
+			if (kiloByteCount == 0) return "0KiB";
+			final var order = (int) (Math.log(kiloByteCount) / Math.log(1024));
+			@SuppressWarnings("SpellCheckingInspection") final var orderName = "KMGTPEZ".charAt(order);
+			final var mantissa = (int) (kiloByteCount / Math.pow(1024, order));
+			return String.format("%s%siB", mantissa, orderName);
+		} catch (Exception e) {
+			LOG.error("Error pretty printing", e);
+			return null;
+		}
 	}
 
-	enum Column {
+	enum LongCompatibleColumn {
 		STARTUPS, SPOILER_MESSAGES, SPOILER_FILES, XFER_KB, INFO_PROVIDED, MESSAGES_SEEN, REACTIONS_SEEN, GUILD_JOINS, GUILD_LEAVES;
-
-		private static final Pattern SAFE_CHARS = Pattern.compile("^[a-zA-Z_]+$");
-
-		// This is NOT rigorous protection against SQL injection, just a basic sanity check
-		static boolean isSafeColumnName(CharSequence name) {
-			return SAFE_CHARS.matcher(name).matches();
-		}
-
-		@Override
-		public String toString() {
-			var name = super.name();
-			assert isSafeColumnName(name);
-			return name;
-		}
 	}
 }
