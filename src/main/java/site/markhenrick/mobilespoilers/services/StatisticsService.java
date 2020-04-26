@@ -6,6 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import site.markhenrick.mobilespoilers.MobileSpoilersConfig;
 
+import java.time.LocalDateTime;
+
 @SuppressWarnings("OverlyBroadCatchBlock")
 @Service
 public class StatisticsService {
@@ -21,11 +23,16 @@ public class StatisticsService {
 		this.config = config;
 		this.jdbcTemplate = jdbcTemplate;
 		ensureRow();
+		LOG.info("Epoch {}", getEpoch());
 		if (config.isStatistics()) {
 			LOG.info("Statistics enabled");
 		} else {
 			LOG.warn("Statistics disabled");
 		}
+	}
+
+	public LocalDateTime getEpoch() {
+		return jdbcTemplate.queryForObject("select epoch from statistic", LocalDateTime.class);
 	}
 
 	public boolean isEnabled() {
@@ -111,7 +118,12 @@ public class StatisticsService {
 
 	private void ensureRow() {
 		if (isEnabled()) {
-			jdbcTemplate.execute("insert into statistic default values on conflict do nothing");
+			var modifiedRows =jdbcTemplate.update(
+				"insert into statistic(epoch) values (?) on conflict do nothing", LocalDateTime.now());
+			assert modifiedRows < 2;
+			if (modifiedRows == 1) {
+				LOG.info("Recorded epoch");
+			}
 		}
 	}
 
