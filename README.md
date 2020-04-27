@@ -17,7 +17,7 @@ There is a public instance of this bot which can be invited with [this](https://
 # Setup
 
 * You will need an empty PostgreSQL database
-  * Security-lax quick start: `docker run -e POSTGRES_USER=mobilespoilers -e POSTGRES_PASSWORD=mobilespoilers -p 5432:5432 -d postgres:12` (docker-compose [coming soon](https://github.com/markhenrick/mobilespoilers/issues/11) (tm)!)
+  * Security-lax quick start: `docker run -e POSTGRES_USER=mobilespoilers -e POSTGRES_PASSWORD=mobilespoilers POSTGRES_DB=mobilespoilers -p 5432:5432 -d postgres:12` (docker-compose [coming soon](https://github.com/markhenrick/mobilespoilers/issues/11) (tm)!)
   * I would have used SQLite, but Spring-data doesn't support it at the moment
   * The user will need `create table`, `insert`, `select`, and `delete` privileges. It might be possible to seperate the first from the rest by using `spring.flyway.user/password` properties
   * Other databases will probably work as long as there is a JDBC driver on the classpath, Spring supports it, and it can execute the migrations (`src/main/resources/db/migration`)

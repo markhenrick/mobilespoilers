@@ -1,5 +1,8 @@
 spring:
   datasource:
+    url: jdbc:postgresql://localhost/mobilespoilers
+    username: mobilespoilers
+    password: mobilespoilers
     hikari:
       maximum-pool-size: 1 # This application is effectively single-threaded for business logic
 mobilespoilers:
