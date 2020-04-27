@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  mobilespoilers:
+    build: .
+    environment:
+      - MOBILESPOILERS_ADMIN_USER_ID=12345 # changeme
+      - MOBILESPOILERS_TOKEN=abcde # changeme
+
+  postgres:
+    image: postgres:12
+    environment:
+      - POSTGRES_DB=mobilespoilers
+      - POSTGRES_USER=mobilespoilers
+      - POSTGRES_PASSWORD=mobilespoilers

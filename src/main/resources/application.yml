@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost/mobilespoilers
+    url: jdbc:postgresql://postgres/mobilespoilers
     username: mobilespoilers
     password: mobilespoilers
     hikari:
