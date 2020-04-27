@@ -18,9 +18,11 @@ There is a public instance of this bot which can be invited with [this](https://
 
 Copy `docker-compose.example.yml` to `docker-compose.yml` and insert your settings, then run `docker-compose up` (use `-d` if you don't want to leave the terminal open)
 
-# Individual container from Docker hub
+# Individual container
 
-[Coming soon](https://github.com/markhenrick/mobilespoilers/issues/17) (tm)
+Pre-made image [coming soon](https://github.com/markhenrick/mobilespoilers/issues/17) (tm)
+
+The included `Dockerfile` is a multistage build + package job, so you can just run `docker build -t mobilespoilers .` without needing any dev tools installed. Spring supports reading properties from envvars, see `docker-compose.example.yml` for examples
 
 # Completely Manual Setup
 
