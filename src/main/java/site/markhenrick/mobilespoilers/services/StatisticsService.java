@@ -23,7 +23,6 @@ public class StatisticsService {
 		this.config = config;
 		this.jdbcTemplate = jdbcTemplate;
 		ensureRow();
-		LOG.info("Epoch {}", getEpoch());
 		if (config.isStatistics()) {
 			LOG.info("Statistics enabled");
 		} else {
