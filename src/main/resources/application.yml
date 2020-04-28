@@ -10,3 +10,9 @@ mobilespoilers:
   deletion-emoji: "🗑️"
   prefix: "!"
   statistics: true
+logging:
+  level:
+    root: info
+    site.markhenrick: trace
+  file:
+    name: mobilespoilers.log

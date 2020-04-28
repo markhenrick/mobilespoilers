@@ -4,6 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import site.markhenrick.mobilespoilers.discord.services.JDAHolder;
 
 @SpringBootApplication
@@ -20,6 +21,7 @@ public class MobilespoilersApplication {
 
 	private final JDAHolder jdaHolder;
 
+	@Profile("!test")
 	@Bean
 	public CommandLineRunner commandLineRunner() {
 		return args -> jdaHolder.start();
