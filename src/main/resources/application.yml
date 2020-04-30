@@ -13,6 +13,6 @@ mobilespoilers:
 logging:
   level:
     root: info
-    site.markhenrick: trace
+    site.markhenrick: info
   file:
     name: mobilespoilers.log
