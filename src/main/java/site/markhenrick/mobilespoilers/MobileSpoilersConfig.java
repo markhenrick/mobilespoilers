@@ -1,8 +1,6 @@
 package site.markhenrick.mobilespoilers;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -12,32 +10,15 @@ import javax.annotation.PostConstruct;
 
 @Configuration
 @ConfigurationProperties(prefix = "mobilespoilers")
-@ToString
+@Data
 public class MobileSpoilersConfig {
 	private static final Logger LOG = LoggerFactory.getLogger(MobileSpoilersConfig.class);
 
-	@Getter
-	@Setter
 	private String token;
-
-	@Getter
-	@Setter
 	private String deletionEmoji;
-
-	@Getter
-	@Setter
 	private String prefix;
-
-	@Getter
-	@Setter
 	private String adminUserId;
-
-	@Getter
-	@Setter
 	private boolean showAdminInfo;
-
-	@Getter
-	@Setter
 	private boolean statistics;
 
 	@PostConstruct
