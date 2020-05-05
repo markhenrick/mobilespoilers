@@ -26,6 +26,7 @@ The included `Dockerfile` is a multistage build + package job, so you can just r
 
 # Completely Manual Setup
 
+* I'm developing this on JDK 14 with preview features turned on, though at the moment only features up to JDK 11 have been used
 * You will need an empty PostgreSQL database
   * I would have used SQLite, but Spring-data doesn't support it at the moment
   * The user will need `create table`, `insert`, `select`, and `delete` privileges. It might be possible to seperate the first from the rest by using `spring.flyway.user/password` properties
