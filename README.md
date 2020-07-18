@@ -1,3 +1,7 @@
+# Archived
+
+This repo is now archived, and the public instance of the bot has been shut down (and associated database dropped). It needs some reworking to comply with the new changes to the Discord API and associated ToS, and I expected Discord will add native support for mobile spoilers soon anyway.
+
 # mobilespoilers
 
 ![Java CI with Maven](https://github.com/markhenrick/mobilespoilers/workflows/Java%20CI%20with%20Maven/badge.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -12,7 +16,7 @@ It is currently very much a WIP
 
 # Invite
 
-There is a public instance of this bot which can be invited with [this](https://discordapp.com/oauth2/authorize?client_id=699048830112366632&scope=bot&permissions=322624) link
+~~There is a public instance of this bot which can be invited with [this](https://discordapp.com/oauth2/authorize?client_id=xxx&scope=bot&permissions=322624) link~~
 
 # docker-compose
 
